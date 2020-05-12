@@ -9,4 +9,4 @@ Arithmetic functions
 ### Utilities
 Utility functions
 - util-tohex.s
--- byte2hex
+    - byte2hex
