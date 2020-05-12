@@ -8,5 +8,5 @@ Arithmetic functions
 - mul3
 ### Utilities
 Utility functions
-- int2hex, int2hex_macro
-- byte2hex
+- util-tohex.s
+-- byte2hex
