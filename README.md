@@ -35,6 +35,9 @@ Utility functions
     - int2hex_macro
     - int2hex
     - byte2hex
+### Vasm
+Changes to vasm 1.8h to allow sections to start with an empty definition and
+split into parts without overlap errors. It's kludgy but it works so far.
 ## Notes
 - Multi-byte integers are stored in big-endian form. This simplifies the loops
 used in processing.
