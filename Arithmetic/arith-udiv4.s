@@ -15,39 +15,43 @@
 ;
 
 ;------------------------------------------------------------------------------
-; umul3_macro
-;  store pointers to operands and result, call umul3
+; udiv4_macro
+;  store pointers to operands and result, call udiv4
 ;
 ; parms
-; op_c - pointer to space to hold result
-; op_a - pointer to left operand
-; op_b - pointer to right operand
-; size - number of bytes in operands a and b
+; op_n - pointer to double width numerator
+; op_d - pointer to denominator
+; op_q - pointer to space to hold q
+; op_r - pointer to space to hold r
+; size - number of bytes in operands d, q and r
 ;
 ; stack usage
-; 3 bytes for umul3 call
+; 4 bytes for udiv4 call
 ;
 ; note:
-; - assumes dest space is at least 2*size bytes
 ;
 
-  .macro          umul3_macro,op_c,op_a,op_b,size
-    lda   \4
+  .macro          udiv4_macro,op_n,op_d,op_q,op_r,size
+    lda   \5
     sta   arith_op_a_size               ; store a in operand a size field
-    lda   #<\2                          ; store &op_a in operand a pointer
+    lda   #<\1                          ; store &op_n in operand a pointer
     sta   arith_op_a_ptr
-    lda   #>\2
-    sta   arith_op_a_ptr+1
-    lda   #<\3                          ; store &op_b in operand b pointer
-    sta   arith_op_b_ptr
-    lda   #>\3
-    sta   arith_op_b_ptr+1
-    lda   #<\1                          ; store &op_c in operand c pointer
-    sta   arith_op_c_ptr
     lda   #>\1
+    sta   arith_op_a_ptr+1
+    lda   #<\2                          ; store &op_d in operand b pointer
+    sta   arith_op_b_ptr
+    lda   #>\2
+    sta   arith_op_b_ptr+1
+    lda   #<\3                          ; store &op_q in operand c pointer
+    sta   arith_op_c_ptr
+    lda   #>\3
     sta   arith_op_c_ptr+1
+    lda   #<\4                          ; store &op_r in operand d pointer
+    sta   arith_op_d_ptr
+    lda   #>\4
+    sta   arith_op_d_ptr+1
 
-    jsr   umul3                         ; call umul function
+    jsr   udiv4                         ; call udiv function
   .endm
 
 ;==============================================================================
