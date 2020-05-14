@@ -18,16 +18,28 @@
 ; int2hex_macro
 ;  store pointers to source and dest, call int2hex
 ;
+; parms
+; dest   - pointer to space to hold converted int
+; source - pointer to multibyte int
+; size   - number of bytes in int
+;
+; stack usage
+; 7 bytes for int2hex call
+;
+; note:
+; - assumes dest space is at least 2*size+1 bytes
+;
 
-  .macro          int2hex_macro,source,dest
+  .macro          int2hex_macro,dest,source,size
+    lda   \3
     sta   arith_op_a_size               ; store a in operand a size field
-    lda   #<\1                          ; store &source in operand a pointer
+    lda   #<\2                          ; store &source in operand a pointer
     sta   arith_op_a_ptr
-    lda   #>\1
-    sta   arith_op_a_ptr+1
-    lda   #<\2                          ; store &dest in operand c pointer
-    sta   arith_op_c_ptr
     lda   #>\2
+    sta   arith_op_a_ptr+1
+    lda   #<\1                          ; store &dest in operand c pointer
+    sta   arith_op_c_ptr
+    lda   #>\1
     sta   arith_op_c_ptr+1
 
     jsr   int2hex                       ; call conversion function

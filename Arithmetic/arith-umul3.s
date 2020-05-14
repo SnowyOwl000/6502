@@ -1,4 +1,4 @@
-; arith-mul3.s
+; arith-umul3.s
 ; - 3-operand unsigned multiply
 ;
 ; written 12 may 2020 by rwk
@@ -8,10 +8,56 @@
   ; requires arith-space
   ;
 
-  .include          arith-space.s
+  .include          ../Arithmetic/arith-space.s
+
+;==============================================================================
+; macros
+;
+
+;------------------------------------------------------------------------------
+; umul3_macro
+;  store pointers to operands and result, call umul3
+;
+; parms
+; op_c - pointer to space to hold result
+; op_a - pointer to left operand
+; op_b - pointer to right operand
+; size - number of bytes in operands a and b
+;
+; stack usage
+; 3 bytes for umul3 call
+;
+; note:
+; - assumes dest space is at least 2*size bytes
+;
+
+  .macro          umul3_macro,op_c,op_a,op_b,size
+    lda   \4
+    sta   arith_op_a_size               ; store a in operand a size field
+    lda   #<\2                          ; store &op_a in operand a pointer
+    sta   arith_op_a_ptr
+    lda   #>\2
+    sta   arith_op_a_ptr+1
+    lda   #<\3                          ; store &op_b in operand b pointer
+    sta   arith_op_b_ptr
+    lda   #>\3
+    sta   arith_op_b_ptr+1
+    lda   #<\1                          ; store &op_c in operand c pointer
+    sta   arith_op_c_ptr
+    lda   #>\1
+    sta   arith_op_c_ptr+1
+
+    jsr   umul3                         ; call umul function
+  .endm
+
+;==============================================================================
+; rom section
+;
+
+  .section        rom,"acdrx"
 
 ;-----------------------------------------------------------------------------
-; mul3
+; umul3
 ; - three-operand unsigned multiply: c = a * b
 ;
 ; parms
@@ -27,7 +73,7 @@
 ; 3 bytes - 2 for return address and one scratch byte
 ;
 
-mul3:
+umul3:
   lda   arith_op_a_size                 ; y = operand a size - 1
   tay
   dey
@@ -36,7 +82,7 @@ mul3:
   tax
   dex
 
-  phx                                   ; save 2 * op size - 1 for later
+  sta   arith_op_c_size                 ; save 2 * op a size for later
 
 .prep_loop1:
   lda   (arith_op_a_ptr),y              ; scratch2[y] = (*a)[y]
@@ -53,7 +99,8 @@ mul3:
 
   bpl   .prep_loop1                     ; loop back if y >= 0
 
-  ply                                   ; pop 2*op size - 1 into y
+  ldy   arith_op_c_size                 ; y = 2*op size - 1
+  dey
 
 .prep_loop2:
   sta   (arith_op_c_ptr),y              ; (*c)[y] = 0
@@ -82,17 +129,17 @@ mul3:
   ; shift a (scratch 2) right 1 bit
   ;
 
-  ldy   #0                              ; y = 0
-  ldx   arith_op_a_size                 ; x = number of bytes to shift
+  ldx   #0                              ; x = 0
+  ldy   arith_op_a_size                 ; y = number of bytes to shift
   clc
 
 .mul_a_rshift_loop:                     ; work from msb to lsb
-  ror   scratch_space2,y                ; shift scratch2[y]
+  ror   scratch_space2,x                ; shift scratch2[x]
 
-  iny                                   ; y++
-  dex                                   ; x--
+  inx                                   ; x++
+  dey                                   ; y--
 
-  bne .mul_a_rshift_loop                ; loop back if x != 0
+  bne .mul_a_rshift_loop                ; loop back if y != 0
 
   ;
   ; skip if carry clear
@@ -116,7 +163,8 @@ mul3:
   dey                                   ; y--
 
   bpl   .mul_add_b_loop                 ; loop back if y >= 0
-
+;  pla
+;  rts
 .mul_no_add:
 
   ;

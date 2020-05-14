@@ -1,0 +1,1454 @@
+F00:0001       ; hello4.s
+F00:0002       ; - version 4, hello world
+F00:0003       ;
+F00:0004       ; written 19 april 2020 by rwk
+F00:0005       ;
+F00:0006       
+F00:0007       ;==============================================================================
+F00:0008       ; include external defs and sections
+F00:0009       ;
+F00:0010       
+F00:0011         ;
+F00:0012         ; memory map
+F00:0013         ;
+F00:0014       
+F00:0015         .include        ../Memory/memory-map.s
+F01:0001       ; memory-map.s
+F01:0002       ; - memory map for rwk design
+F01:0003       ;
+F01:0004       ; written 12 may 2020 by rwk
+F01:0005       ;
+F01:0006       
+F01:0007       ;==============================================================================
+F01:0008       ; locations of items in rwk design
+F01:0009       ;
+F01:0010       ; also section definitions
+F01:0011       ;
+F01:0012       
+F01:0013       RAM_START         .equ  $0000   ; start of the zero page
+F01:0014       IOSPACE_START     .equ  $8000   ; start of I/O space
+F01:0015       ROM_START         .equ  $8200   ; first byte of ROM code after I/O space
+F01:0016       VECTOR_TABLE      .equ  $fffa   ; CPU vector table
+F01:0017       
+F01:0018       ;------------------------------------------------------------------------------
+F01:0019       ; sections
+F01:0020       ;
+F01:0021       
+F01:0022         .org            RAM_START
+F01:0023         .section        zero_page,"adrw"
+F01:0024       
+F01:0025         .org            IOSPACE_START
+F01:0026         .section        iospace,"adrw"
+F01:0027       
+F01:0028         .org            ROM_START
+F01:0029         .section        rom,"acdrx"
+F01:0030       
+F01:0031         .org            VECTOR_TABLE
+F01:0032         .section        vectors,"adr"
+F01:0033       
+F00:0016       
+F00:0017         ;
+F00:0018         ; 4-data-line 16x2 LCD
+F00:0019         ;
+F00:0020       
+F00:0021         .include        ../LCD-16x2/lcd4.s
+F02:0001       ; lcd4.s
+F02:0002       ; - 16x2 lcd definitions, code and data for 4-bit operation
+F02:0003       ;
+F02:0004       ; written 20 april 2020 by rwk
+F02:0005       ;
+F02:0006       ; modification history:
+F02:0007       ; 21 april 2020:
+F02:0008       ; - modified hardware, data lines to B3--B0, E is B7, RW is B6, RS is B5
+F02:0009       ; - modified software to use new wiring
+F02:0010       ; - moved wait2 and its data to util.s
+F02:0011       ;
+F02:0012       
+F02:0013         ;
+F02:0014         ; requires 65c22.s and util-wait.s
+F02:0015         ;
+F02:0016       
+F02:0017         .include        ../Memory/65c22.s
+F03:0001       ; 65c22.s
+F03:0002       ; - definitions et al for working with 65c22 VIA chips
+F03:0003       ;
+F03:0004       ; written 12 april 2020 by rwk
+F03:0005       ;
+F03:0006       
+F03:0007         .ifndef         _65c22_s
+F03:0008         .defc           _65c22_s = 1
+F03:0009       
+F03:0010       VIA0_PORTB  .equ  $8000   ; port b, in and out
+F03:0011       VIA0_PORTA  .equ  $8001   ; port a, in and out
+F03:0012       VIA0_DDRB   .equ  $8002   ; port b data direction register
+F03:0013       VIA0_DDRA   .equ  $8003   ; port a data direction register
+F03:0014       VIA0_T1C_L  .equ  $8004   ; timer 1 low-order counter / latches
+F03:0015       VIA0_T1C_H  .equ  $8005   ; timer 1 high-order counter
+F03:0016       VIA0_T1L_L  .equ  $8006   ; timer 1 low-order latches
+F03:0017       VIA0_T1L_H  .equ  $8007   ; timer 1 high-order latches
+F03:0018       VIA0_T2C_L  .equ  $8008   ; timer 2 low-order counter / latches
+F03:0019       VIA0_T2C_H  .equ  $8009   ; timer 2 high-order counter
+F03:0020       VIA0_SR     .equ  $800a   ; shift register
+F03:0021       VIA0_ACR    .equ  $800b   ; aux control register
+F03:0022       VIA0_PCR    .equ  $800c   ; peripheral control register
+F03:0023       VIA0_IFR    .equ  $800d   ; interrupt flag register
+F03:0024       VIA0_IER    .equ  $800e   ; interrupt enable register
+F03:0025       VIA0_RAWA   .equ  $800f   ; port a in/out, no handshake
+F03:0026       
+F03:0027         .endif
+F03:0028         
+F03:0029       
+F02:0018         .include        ../Utilities/util-wait.s
+F04:0001       ; util-wait.s
+F04:0002       ; - definitions, code and data for wait2 function
+F04:0003       ;
+F04:0004       ; written 21 april 2020 by rwk
+F04:0005       ;
+F04:0006       
+F04:0007         .ifndef         _util_wait_s
+F04:0008         .defc           _util_wait_s = 1
+F04:0009       
+F04:0010       ;==============================================================================
+F04:0011       ; zero-page section
+F04:0012       ;
+F04:0013       
+F04:0014         .section        zero_page,"adrw"
+F04:0015       
+F04:0016       ;------------------------------------------------------------------------------
+F04:0017       ; wait_count
+F04:0018       ;  outer and inner loop counter values for wait loop
+F04:0019       ;
+F04:0020       ; zero page usage
+F04:0021       ; 2 bytes
+F04:0022       ;
+F04:0023       
+F04:0024         zpage           wait_count
+F04:0025       wait_count:
+F04:0026         blk       2
+F04:0027       
+F04:0028       ;==============================================================================
+F04:0029       ; rom section
+F04:0030       ;
+F04:0031       
+F04:0032         .section        rom,"acdrx"
+F04:0033       
+F04:0034       ;------------------------------------------------------------------------------
+F04:0035       ; wait2
+F04:0036       ;  double-loop busy wait
+F04:0037       ;
+F04:0038       ; parms
+F04:0039       ; (wait_count) - outer loop counter
+F04:0040       ; (wait_count+1) - inner loop counter
+F04:0041       ;
+F04:0042       ; clobbers
+F04:0043       ; x,(wait_count)
+F04:0044       ;
+F04:0045       ; stack
+F04:0046       ; 2 bytes for return
+F04:0047       ;
+F04:0048       
+F04:0049       wait2:
+F04:0050         ldx   wait_count+1                    ; set up inner loop counter       t=3x
+               S06:00008200:  A6 01 [R]
+F04:0051       
+F04:0052       .inner:                                 ; inner loop
+F04:0053         dex                                   ; y--                     t=x(2y)=2xy
+               S06:00008202:  CA
+F04:0054         bne   .inner                          ; repeat until y == 0     t=x(3(y-1)+2)
+               S06:00008203:  D0 FD
+F04:0055       
+F04:0056         dec   wait_count                      ; back in outer loop, x--         t=5x
+               S06:00008205:  C6 00 [R]
+F04:0057         bne   wait2                           ; repeat until x == 0   t=3(x-1)+2=3x-1
+               S06:00008207:  D0 F7
+F04:0058       
+F04:0059         rts                                   ; all done       total=5xy+8x+1+(6--14)
+               S06:00008209:  60
+F04:0060       
+F04:0061         .endif
+F04:0062       
+F02:0019       
+F02:0020       ;==============================================================================
+F02:0021       ; constants
+F02:0022       ;
+F02:0023       
+F02:0024       ;------------------------------------------------------------------------------
+F02:0025       ; pin definitions
+F02:0026       ;
+F02:0027       
+F02:0028       LCD_E             .equ  %10000000       ; E bit port B
+F02:0029       LCD_RW            .equ  %01000000       ; RW bit port B
+F02:0030       LCD_RS            .equ  %00100000       ; RS bit port B
+F02:0031       
+F02:0032       ;------------------------------------------------------------------------------
+F02:0033       ; commands
+F02:0034       ;
+F02:0035       
+F02:0036       LCD_CMD_CLEAR     .equ  %00000001       ; clear display reset DDRAM
+F02:0037       LCD_CMD_HOME      .equ  %00000010       ; DDRAM address = 0; cursor home
+F02:0038       LCD_CMD_ENTRY     .equ  %00000100       ; entry mode set
+F02:0039       LCD_CMD_DISP      .equ  %00001000       ; display on/off control
+F02:0040       LCD_CMD_SHIFT     .equ  %00010000       ; cursor / display shift
+F02:0041       LCD_CMD_FNSET     .equ  %00100000       ; function set
+F02:0042       LCD_CMD_CGRAM     .equ  %01000000       ; set CGRAM address
+F02:0043       LCD_CMD_DDRAM     .equ  %10000000       ; set DDRAM address
+F02:0044       
+F02:0045       ;------------------------------------------------------------------------------
+F02:0046       ; command parameters / options
+F02:0047       ;
+F02:0048       
+F02:0049       LCD_INC           .equ  %00000010       ; inc/dec, 1 = inc
+F02:0050       LCD_SHIFT         .equ  %00000001       ; shift direction, 1 = left
+F02:0051       LCD_DISP          .equ  %00000100       ; display on/off, 1 = on
+F02:0052       LCD_CURSOR        .equ  %00000010       ; cursor on/off, 1 = on
+F02:0053       LCD_BLINK         .equ  %00000001       ; cursor blink, 1 = blink
+F02:0054       LCD_SM            .equ  %00001000       ; shift or move cursor, 1 = shift
+F02:0055       LCD_DIR           .equ  %00000100       ; shift / move direction, 1 = left
+F02:0056       LCD_8BIT          .equ  %00010000       ; data length, 1 = 8 bits
+F02:0057       LCD_2LINES        .equ  %00001000       ; number of lines, 1 = 2 lines
+F02:0058       LCD_5x10          .equ  %00000100       ; font select, 1 = 5x10 font
+F02:0059       
+F02:0060       ;==============================================================================
+F02:0061       ; macros
+F02:0062       ;
+F02:0063       
+F02:0064       ;------------------------------------------------------------------------------
+F02:0065       ; lcd_init_macro
+F02:0066       ;  initialize 16x2 lcd screen using 4-bit input and control lines all on port B
+F02:0067       ;
+F02:0068       
+F02:0069         .macro          lcd_init_macro
+F02:0127       
+F02:0128       
+F02:0129       ;------------------------------------------------------------------------------
+F02:0130       ; lcd_puts_macro
+F02:0131       ;  output a string
+F02:0132       ;
+F02:0133       ; parm
+F02:0134       ; ptr - address of string to be displayed
+F02:0135       ;
+F02:0136       ; zero page usage
+F02:0137       ; lcd_puts_ptr - 2-byte indirect address
+F02:0138       ;
+F02:0139       ; stack usage
+F02:0140       ; 4 bytes; 2 for return and 2 for return from lcd_putchar
+F02:0141       ;
+F02:0142       
+F02:0143         .macro          lcd_puts_macro,ptr
+F02:0150       
+F02:0151       
+F02:0152       ;==============================================================================
+F02:0153       ; zero-page section
+F02:0154       ;
+F02:0155       
+F02:0156         .section        zero_page,"adrw"
+F02:0157       
+F02:0158       ;------------------------------------------------------------------------------
+F02:0159       ; lcd_puts_ptr
+F02:0160       ;  storage for address of string being displayed
+F02:0161       ;
+F02:0162       ; zero page usage
+F02:0163       ; 2 bytes
+F02:0164       ;
+F02:0165       
+F02:0166         zpage           lcd_puts_ptr
+F02:0167       lcd_puts_ptr:                           ; pointer to string being printed
+F02:0168         blk   2
+F02:0169       
+F02:0170       ;------------------------------------------------------------------------------
+F02:0171       ; lcd_hi_bits
+F02:0172       ;  control bit settings for port B commands
+F02:0173       ;
+F02:0174       ; zero page usage
+F02:0175       ; 1 byte
+F02:0176       ;
+F02:0177       
+F02:0178         zpage           lcd_hi_bits
+F02:0179       lcd_hi_bits:
+F02:0180         blk   1
+F02:0181       
+F02:0182       ;==============================================================================
+F02:0183       ; rom section
+F02:0184       ;
+F02:0185       
+F02:0186         .section        rom,"acdrx"
+F02:0187       
+F02:0188       ;------------------------------------------------------------------------------
+F02:0189       ; lcd_cmd
+F02:0190       ;  send control command to lcd screen
+F02:0191       ;
+F02:0192       ; parms
+F02:0193       ; a - command to send
+F02:0194       ;
+F02:0195       ; clobbers
+F02:0196       ; ax
+F02:0197       ;
+F02:0198       ; stack needs
+F02:0199       ; 3 bytes; 2 for return address, 1 for storing a
+F02:0200       ;
+F02:0201       
+F02:0202       lcd_cmd:
+F02:0203         ldx   #$00                            ; set line for sending command
+               S06:0000820A:  A2 00
+F02:0204         stx   lcd_hi_bits                     ; save it for later
+               S06:0000820C:  86 04 [R]
+F02:0205       
+F02:0206         bra   lcd_common                      ; off to the code for sending cmd/data
+               S06:0000820E:  80 04
+F02:0207       
+F02:0208       ;------------------------------------------------------------------------------
+F02:0209       ; lcd_putchar
+F02:0210       ;  send single character to lcd screen
+F02:0211       ;
+F02:0212       ; parms
+F02:0213       ; a - char to send
+F02:0214       ;
+F02:0215       ; clobbers
+F02:0216       ; ax
+F02:0217       ;
+F02:0218       ; stack needs
+F02:0219       ; 3 bytes; 2 for return address, 1 to store a
+F02:0220       ;
+F02:0221       
+F02:0222       lcd_putchar:
+F02:0223         ldx   #LCD_RS                         ; set line for sending data
+               S06:00008210:  A2 20
+F02:0224         stx   lcd_hi_bits                     ; save it for later use
+               S06:00008212:  86 04 [R]
+F02:0225       
+F02:0226         ;
+F02:0227         ; entry point from lcd_cmd
+F02:0228         ;
+F02:0229       
+F02:0230       lcd_common:
+F02:0231         pha                                   ; save a for later
+               S06:00008214:  48
+F02:0232         ror                                   ; move high nybble to low nybble
+               S06:00008215:  6A
+F02:0233         ror
+               S06:00008216:  6A
+F02:0234         ror
+               S06:00008217:  6A
+F02:0235         ror
+               S06:00008218:  6A
+F02:0236         and   #$0f                            ; mask off high nybble
+               S06:00008219:  29 0F
+F02:0237         ora   lcd_hi_bits                     ; replace with control bits
+               S06:0000821B:  05 04 [R]
+F02:0238         sta   VIA0_PORTB                      ; send command to port B
+               S06:0000821D:  8D 00 80
+F02:0239       
+F02:0240       .loop1:
+F02:0241         eor   #LCD_E                          ; toggle the E line
+               S06:00008220:  49 80
+F02:0242         sta   VIA0_PORTB
+               S06:00008222:  8D 00 80
+F02:0243         bmi   .loop1
+               S06:00008225:  30 F9
+F02:0244       
+F02:0245         pla                                   ; restore a
+               S06:00008227:  68
+F02:0246         and   #$0f                            ; mask off the high nybble
+               S06:00008228:  29 0F
+F02:0247         ora   lcd_hi_bits                     ; replace with control bits again
+               S06:0000822A:  05 04 [R]
+F02:0248       
+F02:0249       ;------------------------------------------------------------------------------
+F02:0250       ; lcd_first_cmd
+F02:0251       ;  send control command to lcd screen in pseudo 8-bit mode
+F02:0252       ;
+F02:0253       ; parms
+F02:0254       ; a - command to send
+F02:0255       ;
+F02:0256       ; clobbers
+F02:0257       ; a
+F02:0258       ;
+F02:0259       ; stack needs
+F02:0260       ; 2 bytes for return address
+F02:0261       ;
+F02:0262       ; notes
+F02:0263       ; - this is used to send the initial sequence of 8-bit commands. since the
+F02:0264       ;   hardware doesn't care about the low 4 bits in these commands, we can just
+F02:0265       ;   directly send the high 4 bits without having to split and shift the byte
+F02:0266       ; - otherwise, the "normal" code for sending a byte as two 4-bit chunks falls
+F02:0267       ;   into this code from above when it's ready to send the low 4 bits.
+F02:0268       ;
+F02:0269       
+F02:0270       lcd_first_cmd:
+F02:0271         sta   VIA0_PORTB                      ; send RS-RW-E config to port B
+               S06:0000822C:  8D 00 80
+F02:0272       
+F02:0273       .loop2:
+F02:0274         eor   #LCD_E                          ; toggle the E bit
+               S06:0000822F:  49 80
+F02:0275         sta   VIA0_PORTB
+               S06:00008231:  8D 00 80
+F02:0276         bmi   .loop2
+               S06:00008234:  30 F9
+F02:0277       
+F02:0278         ;
+F02:0279         ; delay is 5a-1 = 44us
+F02:0280         ;
+F02:0281       
+F02:0282         lda #9
+               S06:00008236:  A9 09
+F02:0283       .delay
+F02:0284         dea
+               S06:00008238:  3A
+F02:0285         bne   .delay
+               S06:00008239:  D0 FD
+F02:0286       
+F02:0287         rts                                   ; all done, go back
+               S06:0000823B:  60
+F02:0288       
+F02:0289       ;------------------------------------------------------------------------------
+F02:0290       ; lcd_puts
+F02:0291       ;  send single character to lcd screen
+F02:0292       ;
+F02:0293       ; parms
+F02:0294       ; lcd_puts_ptr - address of string to send must be preloaded here
+F02:0295       ;
+F02:0296       ; clobbers
+F02:0297       ; axy
+F02:0298       ;
+F02:0299       ; stack needs
+F02:0300       ; 5 bytes; 2 for return address, 3 for call to lcd_putchar
+F02:0301       ;
+F02:0302       
+F02:0303       lcd_puts:
+F02:0304         ldy   #0                              ; start y at 0
+               S06:0000823C:  A0 00
+F02:0305       
+F02:0306       .loop:
+F02:0307         lda   (lcd_puts_ptr),y                ; a <- (*lcd_puts_ptr)[y]
+               S06:0000823E:  B1 02 [R]
+F02:0308       
+F02:0309         beq   .done                           ; if a == 0, we're done
+               S06:00008240:  F0 06
+F02:0310       
+F02:0311         jsr   lcd_putchar                     ; display the character
+               S06:00008242:  20 10 82 [R]
+F02:0312       
+F02:0313         iny                                   ; y++, move to next character
+               S06:00008245:  C8
+F02:0314       
+F02:0315         bra .loop                             ; on to the next character
+               S06:00008246:  80 F6
+F02:0316       
+F02:0317       .done:
+F02:0318         rts                                   ; all done
+               S06:00008248:  60
+F02:0319       
+F02:0320       ;==============================================================================
+F02:0321       ; data
+F02:0322       ;
+F02:0323       
+F02:0324       ;------------------------------------------------------------------------------
+F02:0325       ; lcd_first_cmd_data
+F02:0326       ;  timing delays and initial 8-bit commands to send to lcd
+F02:0327       ;
+F02:0328       
+F02:0329       lcd_first_cmd_data:
+F02:0330         .byte   24,165,(LCD_CMD_FNSET | LCD_8BIT)/16
+               S06:00008249:  18
+               S06:0000824A:  A5
+               S06:0000824B:  03
+F02:0331         .byte   30, 65,(LCD_CMD_FNSET | LCD_8BIT)/16
+               S06:0000824C:  1E
+               S06:0000824D:  41
+               S06:0000824E:  03
+F02:0332         .byte    5, 38,(LCD_CMD_FNSET | LCD_8BIT)/16
+               S06:0000824F:  05
+               S06:00008250:  26
+               S06:00008251:  03
+F02:0333         .byte    5, 38,(LCD_CMD_FNSET | LCD_2LINES)/16
+               S06:00008252:  05
+               S06:00008253:  26
+               S06:00008254:  02
+F02:0334         .byte    5, 38,0
+               S06:00008255:  05
+               S06:00008256:  26
+               S06:00008257:  00
+F02:0335       
+F02:0336       ;------------------------------------------------------------------------------
+F02:0337       ; lcd_4bit_cmd_data
+F02:0338       ;  initial commands to be sent in 4-bit mode
+F02:0339       ;
+F02:0340       
+F02:0341       lcd_4bit_cmd_data:
+F02:0342         .byte   (LCD_CMD_FNSET | LCD_2LINES)
+               S06:00008258:  28
+F02:0343         .byte   (LCD_CMD_DISP | LCD_DISP | LCD_CURSOR)
+               S06:00008259:  0E
+F02:0344         .byte   (LCD_CMD_ENTRY | LCD_INC)
+               S06:0000825A:  06
+F02:0345         .byte   LCD_CMD_CLEAR
+               S06:0000825B:  01
+F02:0346         .byte   0
+               S06:0000825C:  00
+F02:0347       
+F00:0022       
+F00:0023         ;
+F00:0024         ; unsigned multiply
+F00:0025         ;
+F00:0026       
+F00:0027         .include        ../Arithmetic/arith-umul3.s
+F05:0001       ; arith-umul3.s
+F05:0002       ; - 3-operand unsigned multiply
+F05:0003       ;
+F05:0004       ; written 12 may 2020 by rwk
+F05:0005       ;
+F05:0006       
+F05:0007         ;
+F05:0008         ; requires arith-space
+F05:0009         ;
+F05:0010       
+F05:0011         .include          ../Arithmetic/arith-space.s
+F06:0001       ; arith-space.s
+F06:0002       ; - space used by arithmetic functions (and others)
+F06:0003       ;
+F06:0004       ; written 11 may 2020 by rwk
+F06:0005       ;
+F06:0006       
+F06:0007         .ifndef         _arith_space_s
+F06:0008         .defc           _arith_space_s = 1
+F06:0009       
+F06:0010       ;==============================================================================
+F06:0011       ; zero-page section
+F06:0012       ;
+F06:0013       
+F06:0014         .section        zero_page,"adrw"
+F06:0015       
+F06:0016       ;------------------------------------------------------------------------------
+F06:0017       ; operand pointers and size fields and scratch space
+F06:0018       ; - pointers to three operands and their respective sizes
+F06:0019       ; - scratch space for various operations
+F06:0020       ;
+F06:0021       ; zero page usage
+F06:0022       ; 33 bytes
+F06:0023       ;
+F06:0024       
+F06:0025         zpage     arith_op_a_ptr
+F06:0026         zpage     arith_op_b_ptr
+F06:0027         zpage     arith_op_c_ptr
+F06:0028         zpage     arith_op_a_size
+F06:0029         zpage     arith_op_c_size
+F06:0030         zpage     scratch_space1
+F06:0031         zpage     scratch_space2
+F06:0032       arith_op_a_ptr:                   ; pointer to arithmetic operand a
+F06:0033         blk       2
+F06:0034       arith_op_b_ptr:                   ; pointer to arithmetic operand b
+F06:0035         blk       2
+F06:0036       arith_op_c_ptr:                   ; pointer to arithmetic operand c
+F06:0037         blk       2
+F06:0038       arith_op_a_size:                  ; operand a size in bytes
+F06:0039         blk       1
+F06:0040       arith_op_c_size:                  ; operand c size in bytes
+F06:0041         blk       1
+F06:0042       scratch_space1:                   ; scratch space for multiply and divide
+F06:0043         blk       16
+F06:0044       scratch_space2:
+F06:0045         blk       8
+F06:0046       
+F06:0047         .endif
+F06:0048       
+F05:0012       
+F05:0013       ;==============================================================================
+F05:0014       ; macros
+F05:0015       ;
+F05:0016       
+F05:0017       ;------------------------------------------------------------------------------
+F05:0018       ; umul3_macro
+F05:0019       ;  store pointers to operands and result, call umul3
+F05:0020       ;
+F05:0021       ; parms
+F05:0022       ; op_c - pointer to space to hold result
+F05:0023       ; op_a - pointer to left operand
+F05:0024       ; op_b - pointer to right operand
+F05:0025       ; size - number of bytes in operands a and b
+F05:0026       ;
+F05:0027       ; stack usage
+F05:0028       ; 3 bytes for umul3 call
+F05:0029       ;
+F05:0030       ; note:
+F05:0031       ; - assumes dest space is at least 2*size bytes
+F05:0032       ;
+F05:0033       
+F05:0034         .macro          umul3_macro,op_c,op_a,op_b,size
+F05:0051       
+F05:0052       
+F05:0053       ;==============================================================================
+F05:0054       ; rom section
+F05:0055       ;
+F05:0056       
+F05:0057         .section        rom,"acdrx"
+F05:0058       
+F05:0059       ;-----------------------------------------------------------------------------
+F05:0060       ; umul3
+F05:0061       ; - three-operand unsigned multiply: c = a * b
+F05:0062       ;
+F05:0063       ; parms
+F05:0064       ; arith_op_a_ptr  - pointer to lhs
+F05:0065       ; arith_op_b_ptr  - pointer to rhs
+F05:0066       ; arith_op_c_ptr  - pointer to result
+F05:0067       ; arith_op_a_size - number of bytes in operands a and b; op c twice as large
+F05:0068       ;
+F05:0069       ; clobbers
+F05:0070       ; axy
+F05:0071       ;
+F05:0072       ; stack usage
+F05:0073       ; 3 bytes - 2 for return address and one scratch byte
+F05:0074       ;
+F05:0075       
+F05:0076       umul3:
+F05:0077         lda   arith_op_a_size                 ; y = operand a size - 1
+               S06:0000825D:  A5 0B [R]
+F05:0078         tay
+               S06:0000825F:  A8
+F05:0079         dey
+               S06:00008260:  88
+F05:0080       
+F05:0081         asl                                   ; x = 2 * operand a size - 1
+               S06:00008261:  0A
+F05:0082         tax
+               S06:00008262:  AA
+F05:0083         dex
+               S06:00008263:  CA
+F05:0084       
+F05:0085         sta   arith_op_c_size                 ; save 2 * op a size for later
+               S06:00008264:  85 0C [R]
+F05:0086       
+F05:0087       .prep_loop1:
+F05:0088         lda   (arith_op_a_ptr),y              ; scratch2[y] = (*a)[y]
+               S06:00008266:  B1 05 [R]
+F05:0089         sta   scratch_space2,y
+               S06:00008268:  99 1D 00 [R]
+F05:0090       
+F05:0091         lda   (arith_op_b_ptr),y              ; scratch1[x] = (*b)[y]
+               S06:0000826B:  B1 07 [R]
+F05:0092         sta   scratch_space1,x
+               S06:0000826D:  95 0D [R]
+F05:0093       
+F05:0094         lda   #0                              ; scratch1[y] = 0
+               S06:0000826F:  A9 00
+F05:0095         sta   scratch_space1,y
+               S06:00008271:  99 0D 00 [R]
+F05:0096       
+F05:0097         dex                                   ; x--
+               S06:00008274:  CA
+F05:0098         dey                                   ; y--
+               S06:00008275:  88
+F05:0099       
+F05:0100         bpl   .prep_loop1                     ; loop back if y >= 0
+               S06:00008276:  10 EE
+F05:0101       
+F05:0102         ldy   arith_op_c_size                 ; y = 2*op size - 1
+               S06:00008278:  A4 0C [R]
+F05:0103         dey
+               S06:0000827A:  88
+F05:0104       
+F05:0105       .prep_loop2:
+F05:0106         sta   (arith_op_c_ptr),y              ; (*c)[y] = 0
+               S06:0000827B:  91 09 [R]
+F05:0107       
+F05:0108         dey                                   ; y--
+               S06:0000827D:  88
+F05:0109       
+F05:0110         bpl   .prep_loop2                     ; loop back if y >= 0
+               S06:0000827E:  10 FB
+F05:0111       
+F05:0112         ;
+F05:0113         ; at this point, a is in scratch2, b is zero-padded in scratch 1, c is 0
+F05:0114         ;
+F05:0115       
+F05:0116         lda   arith_op_a_size                 ; a = number of bits in operands
+               S06:00008280:  A5 0B [R]
+F05:0117         asl
+               S06:00008282:  0A
+F05:0118         asl
+               S06:00008283:  0A
+F05:0119         asl
+               S06:00008284:  0A
+F05:0120       
+F05:0121         ;
+F05:0122         ; loop over all bits in operand
+F05:0123         ;
+F05:0124       
+F05:0125       .mul_outer_loop:
+F05:0126         pha                                   ; save count
+               S06:00008285:  48
+F05:0127       
+F05:0128         ;
+F05:0129         ; shift a (scratch 2) right 1 bit
+F05:0130         ;
+F05:0131       
+F05:0132         ldx   #0                              ; x = 0
+               S06:00008286:  A2 00
+F05:0133         ldy   arith_op_a_size                 ; y = number of bytes to shift
+               S06:00008288:  A4 0B [R]
+F05:0134         clc
+               S06:0000828A:  18
+F05:0135       
+F05:0136       .mul_a_rshift_loop:                     ; work from msb to lsb
+F05:0137         ror   scratch_space2,x                ; shift scratch2[x]
+               S06:0000828B:  76 1D [R]
+F05:0138       
+F05:0139         inx                                   ; x++
+               S06:0000828D:  E8
+F05:0140         dey                                   ; y--
+               S06:0000828E:  88
+F05:0141       
+F05:0142         bne .mul_a_rshift_loop                ; loop back if y != 0
+               S06:0000828F:  D0 FA
+F05:0143       
+F05:0144         ;
+F05:0145         ; skip if carry clear
+F05:0146         ;
+F05:0147       
+F05:0148         bcc .mul_no_add
+               S06:00008291:  90 0E
+F05:0149       
+F05:0150         ;
+F05:0151         ; add b (scratch 1) to c
+F05:0152         ;
+F05:0153       
+F05:0154         ldy   arith_op_c_size                 ; y = number of output bytes - 1
+               S06:00008293:  A4 0C [R]
+F05:0155         dey
+               S06:00008295:  88
+F05:0156         clc
+               S06:00008296:  18
+F05:0157       
+F05:0158       .mul_add_b_loop:
+F05:0159         lda   (arith_op_c_ptr),y              ; (*c)[y] += scratch1[y]
+               S06:00008297:  B1 09 [R]
+F05:0160         adc   scratch_space1,y
+               S06:00008299:  79 0D 00 [R]
+F05:0161         sta   (arith_op_c_ptr),y
+               S06:0000829C:  91 09 [R]
+F05:0162       
+F05:0163         dey                                   ; y--
+               S06:0000829E:  88
+F05:0164       
+F05:0165         bpl   .mul_add_b_loop                 ; loop back if y >= 0
+               S06:0000829F:  10 F6
+F05:0166       ;  pla
+F05:0167       ;  rts
+F05:0168       .mul_no_add:
+F05:0169       
+F05:0170         ;
+F05:0171         ; shift b (scratch 1) left 1 bit
+F05:0172         ;
+F05:0173       
+F05:0174         ldx   arith_op_c_size                 ; x = # output bytes - 1
+               S06:000082A1:  A6 0C [R]
+F05:0175         dex
+               S06:000082A3:  CA
+F05:0176         clc
+               S06:000082A4:  18
+F05:0177       
+F05:0178       .mul_b_lshift_loop:                     ; work from lsb to msb
+F05:0179         rol scratch_space1,x
+               S06:000082A5:  36 0D [R]
+F05:0180       
+F05:0181         dex
+               S06:000082A7:  CA
+F05:0182       
+F05:0183         bpl   .mul_b_lshift_loop              ; loop back if x >= 0
+               S06:000082A8:  10 FB
+F05:0184       
+F05:0185         ;
+F05:0186         ; decrement counter and jump to outer loop if not zero
+F05:0187         ;
+F05:0188       
+F05:0189         pla
+               S06:000082AA:  68
+F05:0190         dec
+               S06:000082AB:  3A
+F05:0191         bne   .mul_outer_loop
+               S06:000082AC:  D0 D7
+F05:0192       
+F05:0193         rts                                   ; all done
+               S06:000082AE:  60
+F05:0194       
+F00:0028       
+F00:0029         ;
+F00:0030         ; hex conversion
+F00:0031         ;
+F00:0032       
+F00:0033         .include        ../Utilities/util-tohex.s
+F07:0001       ; util-tohex.s
+F07:0002       ; - conversion to hex functions
+F07:0003       ;
+F07:0004       ; written 12 may 2020 by rwk
+F07:0005       ;
+F07:0006       
+F07:0007         ;
+F07:0008         ; requires arith-space
+F07:0009         ;
+F07:0010       
+F07:0011         .include        ../Arithmetic/arith-space.s
+F08:0001       ; arith-space.s
+F08:0002       ; - space used by arithmetic functions (and others)
+F08:0003       ;
+F08:0004       ; written 11 may 2020 by rwk
+F08:0005       ;
+F08:0006       
+F08:0007         .ifndef         _arith_space_s
+F08:0008         .defc           _arith_space_s = 1
+F08:0009       
+F08:0010       ;==============================================================================
+F08:0011       ; zero-page section
+F08:0012       ;
+F08:0013       
+F08:0014         .section        zero_page,"adrw"
+F08:0015       
+F08:0016       ;------------------------------------------------------------------------------
+F08:0017       ; operand pointers and size fields and scratch space
+F08:0018       ; - pointers to three operands and their respective sizes
+F08:0019       ; - scratch space for various operations
+F08:0020       ;
+F08:0021       ; zero page usage
+F08:0022       ; 33 bytes
+F08:0023       ;
+F08:0024       
+F08:0025         zpage     arith_op_a_ptr
+F08:0026         zpage     arith_op_b_ptr
+F08:0027         zpage     arith_op_c_ptr
+F08:0028         zpage     arith_op_a_size
+F08:0029         zpage     arith_op_c_size
+F08:0030         zpage     scratch_space1
+F08:0031         zpage     scratch_space2
+F08:0032       arith_op_a_ptr:                   ; pointer to arithmetic operand a
+F08:0033         blk       2
+F08:0034       arith_op_b_ptr:                   ; pointer to arithmetic operand b
+F08:0035         blk       2
+F08:0036       arith_op_c_ptr:                   ; pointer to arithmetic operand c
+F08:0037         blk       2
+F08:0038       arith_op_a_size:                  ; operand a size in bytes
+F08:0039         blk       1
+F08:0040       arith_op_c_size:                  ; operand c size in bytes
+F08:0041         blk       1
+F08:0042       scratch_space1:                   ; scratch space for multiply and divide
+F08:0043         blk       16
+F08:0044       scratch_space2:
+F08:0045         blk       8
+F08:0046       
+F08:0047         .endif
+F08:0048       
+F07:0012       
+F07:0013       ;==============================================================================
+F07:0014       ; macros
+F07:0015       ;
+F07:0016       
+F07:0017       ;------------------------------------------------------------------------------
+F07:0018       ; int2hex_macro
+F07:0019       ;  store pointers to source and dest, call int2hex
+F07:0020       ;
+F07:0021       ; parms
+F07:0022       ; dest   - pointer to space to hold converted int
+F07:0023       ; source - pointer to multibyte int
+F07:0024       ; size   - number of bytes in int
+F07:0025       ;
+F07:0026       ; stack usage
+F07:0027       ; 7 bytes for int2hex call
+F07:0028       ;
+F07:0029       ; note:
+F07:0030       ; - assumes dest space is at least 2*size+1 bytes
+F07:0031       ;
+F07:0032       
+F07:0033         .macro          int2hex_macro,dest,source,size
+F07:0046       
+F07:0047       
+F07:0048       ;==============================================================================
+F07:0049       ; rom section
+F07:0050       ;
+F07:0051       
+F07:0052         .section        rom,"acdrx"
+F07:0053       
+F07:0054       ;------------------------------------------------------------------------------
+F07:0055       ; byte2hex
+F07:0056       ; - convert reg a value to hex, store in op_c[y-1] and op_c[y-2]
+F07:0057       ; - also subtracts 2 from y
+F07:0058       ;
+F07:0059       ; parms
+F07:0060       ; a             - value to be converted
+F07:0061       ; y             - index in array indicating where to store hex digits
+F07:0062       ; operand_c_ptr - pointer to array of char to hold converted hex digits
+F07:0063       ;
+F07:0064       ; clobbers
+F07:0065       ; a
+F07:0066       ;
+F07:0067       ; stack usage
+F07:0068       ; 5 bytes - 2 for return address, 2 for calling into itself and 1 for a
+F07:0069       ;
+F07:0070       ; Notes:
+F07:0071       ; - code taken and modified from code modified from original Woz code
+F07:0072       ; - y is treated as a reference parameter; its value is decremented twice and
+F07:0073       ;   passed back to caller
+F07:0074       ;
+F07:0075       
+F07:0076       byte2hex:
+F07:0077         pha                                   ; save a reg
+               S06:000082AF:  48
+F07:0078         jsr   .to_hex                         ; convert low nybble
+               S06:000082B0:  20 B8 82 [R]
+F07:0079         pla                                   ; restore a
+               S06:000082B3:  68
+F07:0080         ror                                   ; shift high nybble to low nybble
+               S06:000082B4:  6A
+F07:0081         ror
+               S06:000082B5:  6A
+F07:0082         ror
+               S06:000082B6:  6A
+F07:0083         ror
+               S06:000082B7:  6A
+F07:0084       
+F07:0085       .to_hex:                                ; entry point from above
+F07:0086         and   #$0f                            ; mask off high nybble
+               S06:000082B8:  29 0F
+F07:0087         ora   #'0'                            ; convert to ASCII
+               S06:000082BA:  09 30
+F07:0088         cmp   #'9'+1                          ; is value > 9?
+               S06:000082BC:  C9 3A
+F07:0089         bcc   .output                         ; no, output
+               S06:000082BE:  90 02
+F07:0090         adc   #6                              ; yes, adjust to A--F range
+               S06:000082C0:  69 06
+F07:0091       
+F07:0092       .output:
+F07:0093         dey                                   ; move back one position
+               S06:000082C2:  88
+F07:0094         sta   (arith_op_c_ptr),y              ; store hex digit
+               S06:000082C3:  91 09 [R]
+F07:0095         rts                                   ; done
+               S06:000082C5:  60
+F07:0096       
+F07:0097       ;------------------------------------------------------------------------------
+F07:0098       ; int2hex
+F07:0099       ; - convert unsigned int to hex
+F07:0100       ;
+F07:0101       ; parms
+F07:0102       ; arith_op_a_ptr  - pointer to binary value, big-endian
+F07:0103       ; arith_op_c_ptr  - pointer to space to hold converted digits
+F07:0104       ; arith_op_a_size - number of bytes in binary value
+F07:0105       ;
+F07:0106       ; clobbers
+F07:0107       ; axy
+F07:0108       ;
+F07:0109       ; stack space
+F07:0110       ; 7 bytes - 2 for return address, 5 for byte2hex
+F07:0111       ;
+F07:0112       ; Note:
+F07:0113       ; - assumes operand c size is > 2 * (operand a size)
+F07:0114       
+F07:0115       int2hex:
+F07:0116         clc                                   ; set y = 2 * (operand a size)
+               S06:000082C6:  18
+F07:0117         lda   arith_op_a_size                 ; index of 0 at end of string
+               S06:000082C7:  A5 0B [R]
+F07:0118       
+F07:0119         tax                                   ; a brief zwischenzug
+               S06:000082C9:  AA
+F07:0120         dex                                   ; x is index of byte to be converted
+               S06:000082CA:  CA
+F07:0121       
+F07:0122         adc   arith_op_a_size
+               S06:000082CB:  65 0B [R]
+F07:0123         tay
+               S06:000082CD:  A8
+F07:0124       
+F07:0125         lda   #0                              ; (*operand_c_ptr)[y] = 0
+               S06:000082CE:  A9 00
+F07:0126         sta   (arith_op_c_ptr),y
+               S06:000082D0:  91 09 [R]
+F07:0127       
+F07:0128       .loop:
+F07:0129         phy                                   ; save y
+               S06:000082D2:  5A
+F07:0130       
+F07:0131         txa                                   ; copy x to y for indirect index load
+               S06:000082D3:  8A
+F07:0132         tay
+               S06:000082D4:  A8
+F07:0133         lda (arith_op_a_ptr),y                ; a = (*operand_a_ptr)[y=x]
+               S06:000082D5:  B1 05 [R]
+F07:0134       
+F07:0135         ply                                   ; restore y
+               S06:000082D7:  7A
+F07:0136         dex                                   ; increment x
+               S06:000082D8:  CA
+F07:0137       
+F07:0138         jsr byte2hex                          ; convert a to hex
+               S06:000082D9:  20 AF 82 [R]
+F07:0139       
+F07:0140         ;
+F07:0141         ; note: this is a bit of a kludge. last three instructions prior to here are
+F07:0142         ;       dey, sta, rts. Only dey affects flags, so flags will tell us when
+F07:0143         ;       y reaches 0. Since y is decremented before storing a byte, we are done
+F07:0144         ;       when y is 0, not -1.
+F07:0145         ;
+F07:0146       
+F07:0147         bne .loop                             ; loop back if y != 0
+               S06:000082DC:  D0 F4
+F07:0148       
+F07:0149         rts
+               S06:000082DE:  60
+F07:0150       
+F00:0034       
+F00:0035       ;==============================================================================
+F00:0036       ; startup code
+F00:0037       ;
+F00:0038       
+F00:0039         .section        rom,"acdrx"
+F00:0040       reset:
+F00:0041         ldx   #$ff                            ; initialize the stack pointer
+               S06:000082DF:  A2 FF
+F00:0042         txs
+               S06:000082E1:  9A
+F00:0043       
+F00:0044         lcd_init_macro                        ; initialize the lcd
+F09:0001           lda   #%11101111                    ; set DDRB to output all but B5 (unused)
+               S06:000082E2:  A9 EF
+F09:0002           sta   VIA0_DDRB
+               S06:000082E4:  8D 02 80
+F09:0003       
+F09:0004           ;
+F09:0005           ; run through list of commands to be sent in "8-bit" mode
+F09:0006           ;
+F09:0007       
+F09:0008           ldy   #0                            ; initialize counter
+               S06:000082E7:  A0 00
+F09:0009       
+F09:0010       .loop1:
+F09:0011           lda   lcd_first_cmd_data,y          ; outer loop timer
+               S06:000082E9:  B9 49 82 [R]
+F09:0012           sta   wait_count
+               S06:000082EC:  85 00 [R]
+F09:0013           iny
+               S06:000082EE:  C8
+F09:0014       
+F09:0015           lda   lcd_first_cmd_data,y          ; inner loop timer
+               S06:000082EF:  B9 49 82 [R]
+F09:0016           sta   wait_count+1
+               S06:000082F2:  85 01 [R]
+F09:0017           iny
+               S06:000082F4:  C8
+F09:0018       
+F09:0019           jsr   wait2                         ; delay
+               S06:000082F5:  20 00 82 [R]
+F09:0020       
+F09:0021           lda   lcd_first_cmd_data,y          ; get command to send
+               S06:000082F8:  B9 49 82 [R]
+F09:0022           beq   .loop1_done                   ; stop if command is 0
+               S06:000082FB:  F0 06
+F09:0023       
+F09:0024           iny
+               S06:000082FD:  C8
+F09:0025       
+F09:0026           jsr   lcd_first_cmd                 ; send the command
+               S06:000082FE:  20 2C 82 [R]
+F09:0027       
+F09:0028           bra   .loop1                        ; cycle back
+               S06:00008301:  80 E6
+F09:0029       
+F09:0030           ;
+F09:0031           ; next, run through list of commands sent in 4-bit mode
+F09:0032           ;
+F09:0033           ; these all use a standard delay except the last one, which is done
+F09:0034           ; after the loop ends
+F09:0035           ;
+F09:0036       
+F09:0037       .loop1_done:
+F09:0038           ldy   #0
+               S06:00008303:  A0 00
+F09:0039       
+F09:0040       .loop2:
+F09:0041           lda   lcd_4bit_cmd_data,y           ; get the command
+               S06:00008305:  B9 58 82 [R]
+F09:0042           beq   .loop2_done                   ; stop if command is 0
+               S06:00008308:  F0 06
+F09:0043       
+F09:0044           iny
+               S06:0000830A:  C8
+F09:0045       
+F09:0046           jsr   lcd_cmd                       ; send the command
+               S06:0000830B:  20 0A 82 [R]
+F09:0047       
+F09:0048           bra .loop2                          ; cycle back
+               S06:0000830E:  80 F5
+F09:0049       
+F09:0050           ;
+F09:0051           ; extra wait time for the last command
+F09:0052           ;
+F09:0053       
+F09:0054       .loop2_done:
+F09:0055           ldx   #$ff                          ; note: this can be tweaked probably
+               S06:00008310:  A2 FF
+F09:0056           ldy   #$18
+               S06:00008312:  A0 18
+F09:0057           jsr   wait2
+               S06:00008314:  20 00 82 [R]
+F00:0045       
+F00:0046       test_msg          .equ $0200            ; space to hold hex values
+F00:0047       test_op3          .equ $0220            ; space to hold product
+F00:0048       
+F00:0049         ;
+F00:0050         ; display operands
+F00:0051         ;
+F00:0052       
+F00:0053         int2hex_macro   test_msg,test_op1,#2
+F10:0001           lda   #2
+               S06:00008317:  A9 02
+F10:0002           sta   arith_op_a_size               ; store a in operand a size field
+               S06:00008319:  85 0B [R]
+F10:0003           lda   #<test_op1                          ; store &source in operand a pointer
+               S06:0000831B:  A9 CE [R]
+F10:0004           sta   arith_op_a_ptr
+               S06:0000831D:  85 05 [R]
+F10:0005           lda   #>test_op1
+               S06:0000831F:  A9 83 [R]
+F10:0006           sta   arith_op_a_ptr+1
+               S06:00008321:  85 06 [R]
+F10:0007           lda   #<test_msg                          ; store &dest in operand c pointer
+               S06:00008323:  A9 00
+F10:0008           sta   arith_op_c_ptr
+               S06:00008325:  85 09 [R]
+F10:0009           lda   #>test_msg
+               S06:00008327:  A9 02
+F10:0010           sta   arith_op_c_ptr+1
+               S06:00008329:  85 0A [R]
+F10:0011       
+F10:0012           jsr   int2hex                       ; call conversion function
+               S06:0000832B:  20 C6 82 [R]
+F00:0054         lcd_puts_macro  test_msg
+F11:0001           lda   #<test_msg                          ; get low byte of string address
+               S06:0000832E:  A9 00
+F11:0002           sta   lcd_puts_ptr                  ; store in zero page
+               S06:00008330:  85 02 [R]
+F11:0003           lda   #>test_msg                          ; high byte goes next
+               S06:00008332:  A9 02
+F11:0004           sta   lcd_puts_ptr+1
+               S06:00008334:  85 03 [R]
+F11:0005       
+F11:0006           jsr   lcd_puts                      ; call the puts function
+               S06:00008336:  20 3C 82 [R]
+F00:0055       
+F00:0056         lda   #' '
+               S06:00008339:  A9 20
+F00:0057         jsr   lcd_putchar
+               S06:0000833B:  20 10 82 [R]
+F00:0058       
+F00:0059         int2hex_macro   test_msg,test_op2,#2
+F12:0001           lda   #2
+               S06:0000833E:  A9 02
+F12:0002           sta   arith_op_a_size               ; store a in operand a size field
+               S06:00008340:  85 0B [R]
+F12:0003           lda   #<test_op2                          ; store &source in operand a pointer
+               S06:00008342:  A9 D0 [R]
+F12:0004           sta   arith_op_a_ptr
+               S06:00008344:  85 05 [R]
+F12:0005           lda   #>test_op2
+               S06:00008346:  A9 83 [R]
+F12:0006           sta   arith_op_a_ptr+1
+               S06:00008348:  85 06 [R]
+F12:0007           lda   #<test_msg                          ; store &dest in operand c pointer
+               S06:0000834A:  A9 00
+F12:0008           sta   arith_op_c_ptr
+               S06:0000834C:  85 09 [R]
+F12:0009           lda   #>test_msg
+               S06:0000834E:  A9 02
+F12:0010           sta   arith_op_c_ptr+1
+               S06:00008350:  85 0A [R]
+F12:0011       
+F12:0012           jsr   int2hex                       ; call conversion function
+               S06:00008352:  20 C6 82 [R]
+F00:0060         lcd_puts_macro  test_msg
+F13:0001           lda   #<test_msg                          ; get low byte of string address
+               S06:00008355:  A9 00
+F13:0002           sta   lcd_puts_ptr                  ; store in zero page
+               S06:00008357:  85 02 [R]
+F13:0003           lda   #>test_msg                          ; high byte goes next
+               S06:00008359:  A9 02
+F13:0004           sta   lcd_puts_ptr+1
+               S06:0000835B:  85 03 [R]
+F13:0005       
+F13:0006           jsr   lcd_puts                      ; call the puts function
+               S06:0000835D:  20 3C 82 [R]
+F00:0061       
+F00:0062         lda   #$c0                            ; go to next line
+               S06:00008360:  A9 C0
+F00:0063         jsr   lcd_cmd
+               S06:00008362:  20 0A 82 [R]
+F00:0064       
+F00:0065         ;
+F00:0066         ; compute and display product. answer should be 0x09b01c07
+F00:0067         ;
+F00:0068       
+F00:0069         umul3_macro     test_op3,test_op1,test_op2,#2
+F14:0001           lda   #2
+               S06:00008365:  A9 02
+F14:0002           sta   arith_op_a_size               ; store a in operand a size field
+               S06:00008367:  85 0B [R]
+F14:0003           lda   #<test_op1                          ; store &op_a in operand a pointer
+               S06:00008369:  A9 CE [R]
+F14:0004           sta   arith_op_a_ptr
+               S06:0000836B:  85 05 [R]
+F14:0005           lda   #>test_op1
+               S06:0000836D:  A9 83 [R]
+F14:0006           sta   arith_op_a_ptr+1
+               S06:0000836F:  85 06 [R]
+F14:0007           lda   #<test_op2                          ; store &op_b in operand b pointer
+               S06:00008371:  A9 D0 [R]
+F14:0008           sta   arith_op_b_ptr
+               S06:00008373:  85 07 [R]
+F14:0009           lda   #>test_op2
+               S06:00008375:  A9 83 [R]
+F14:0010           sta   arith_op_b_ptr+1
+               S06:00008377:  85 08 [R]
+F14:0011           lda   #<test_op3                          ; store &op_c in operand c pointer
+               S06:00008379:  A9 20
+F14:0012           sta   arith_op_c_ptr
+               S06:0000837B:  85 09 [R]
+F14:0013           lda   #>test_op3
+               S06:0000837D:  A9 02
+F14:0014           sta   arith_op_c_ptr+1
+               S06:0000837F:  85 0A [R]
+F14:0015       
+F14:0016           jsr   umul3                         ; call umul function
+               S06:00008381:  20 5D 82 [R]
+F00:0070       
+F00:0071         int2hex_macro   test_msg,test_op3,#4
+F15:0001           lda   #4
+               S06:00008384:  A9 04
+F15:0002           sta   arith_op_a_size               ; store a in operand a size field
+               S06:00008386:  85 0B [R]
+F15:0003           lda   #<test_op3                          ; store &source in operand a pointer
+               S06:00008388:  A9 20
+F15:0004           sta   arith_op_a_ptr
+               S06:0000838A:  85 05 [R]
+F15:0005           lda   #>test_op3
+               S06:0000838C:  A9 02
+F15:0006           sta   arith_op_a_ptr+1
+               S06:0000838E:  85 06 [R]
+F15:0007           lda   #<test_msg                          ; store &dest in operand c pointer
+               S06:00008390:  A9 00
+F15:0008           sta   arith_op_c_ptr
+               S06:00008392:  85 09 [R]
+F15:0009           lda   #>test_msg
+               S06:00008394:  A9 02
+F15:0010           sta   arith_op_c_ptr+1
+               S06:00008396:  85 0A [R]
+F15:0011       
+F15:0012           jsr   int2hex                       ; call conversion function
+               S06:00008398:  20 C6 82 [R]
+F00:0072       ;  int2hex_macro   test_msg,scratch_space1,#4
+F00:0073         lcd_puts_macro  test_msg
+F16:0001           lda   #<test_msg                          ; get low byte of string address
+               S06:0000839B:  A9 00
+F16:0002           sta   lcd_puts_ptr                  ; store in zero page
+               S06:0000839D:  85 02 [R]
+F16:0003           lda   #>test_msg                          ; high byte goes next
+               S06:0000839F:  A9 02
+F16:0004           sta   lcd_puts_ptr+1
+               S06:000083A1:  85 03 [R]
+F16:0005       
+F16:0006           jsr   lcd_puts                      ; call the puts function
+               S06:000083A3:  20 3C 82 [R]
+F00:0074       
+F00:0075         lda   #' '
+               S06:000083A6:  A9 20
+F00:0076         jsr   lcd_putchar
+               S06:000083A8:  20 10 82 [R]
+F00:0077       
+F00:0078         int2hex_macro   test_msg,scratch_space2,#2
+F17:0001           lda   #2
+               S06:000083AB:  A9 02
+F17:0002           sta   arith_op_a_size               ; store a in operand a size field
+               S06:000083AD:  85 0B [R]
+F17:0003           lda   #<scratch_space2                          ; store &source in operand a pointer
+               S06:000083AF:  A9 1D [R]
+F17:0004           sta   arith_op_a_ptr
+               S06:000083B1:  85 05 [R]
+F17:0005           lda   #>scratch_space2
+               S06:000083B3:  A9 00 [R]
+F17:0006           sta   arith_op_a_ptr+1
+               S06:000083B5:  85 06 [R]
+F17:0007           lda   #<test_msg                          ; store &dest in operand c pointer
+               S06:000083B7:  A9 00
+F17:0008           sta   arith_op_c_ptr
+               S06:000083B9:  85 09 [R]
+F17:0009           lda   #>test_msg
+               S06:000083BB:  A9 02
+F17:0010           sta   arith_op_c_ptr+1
+               S06:000083BD:  85 0A [R]
+F17:0011       
+F17:0012           jsr   int2hex                       ; call conversion function
+               S06:000083BF:  20 C6 82 [R]
+F00:0079         lcd_puts_macro  test_msg
+F18:0001           lda   #<test_msg                          ; get low byte of string address
+               S06:000083C2:  A9 00
+F18:0002           sta   lcd_puts_ptr                  ; store in zero page
+               S06:000083C4:  85 02 [R]
+F18:0003           lda   #>test_msg                          ; high byte goes next
+               S06:000083C6:  A9 02
+F18:0004           sta   lcd_puts_ptr+1
+               S06:000083C8:  85 03 [R]
+F18:0005       
+F18:0006           jsr   lcd_puts                      ; call the puts function
+               S06:000083CA:  20 3C 82 [R]
+F00:0080       
+F00:0081         stp                                   ; halt the processor
+               S06:000083CD:  DB
+F00:0082       
+F00:0083       test_op1:
+F00:0084         .byte   $62,$83                       ; $6283 = 25219
+               S06:000083CE:  62
+               S06:000083CF:  83
+F00:0085       test_op2:
+F00:0086         .byte   $19,$2d                       ; $192d = 6445
+               S06:000083D0:  19
+               S06:000083D1:  2D
+F00:0087       
+F00:0088       ;==============================================================================
+F00:0089       ; vector table
+F00:0090       ;
+F00:0091       
+F00:0092         .section        vectors,"adr"
+F00:0093         .word   0                             ; NMI interrupt vector
+               S08:0000FFFA:  00 00
+F00:0094         .word   reset                         ; CPU reset vector
+               S08:0000FFFC:  DF 82 [R]
+F00:0095         .word   0                             ; break / IRQ vector
+               S08:0000FFFE:  00 00
+F00:0096       
+
+
+Sections:
+S01  seg0
+S02  zero_page
+S03  seg8000
+S04  iospace
+S05  seg8200
+S06  rom
+S07  segfffa
+S08  vectors
+
+
+Sources:
+F00  test-umul.s
+F01  ../Memory/memory-map.s
+F02  ../LCD-16x2/lcd4.s
+F03  ../Memory/65c22.s
+F04  ../Utilities/util-wait.s
+F05  ../Arithmetic/arith-umul3.s
+F06  ../Arithmetic/arith-space.s
+F07  ../Utilities/util-tohex.s
+F08  ../Arithmetic/arith-space.s
+F09  lcd_init_macro
+F10  int2hex_macro
+F11  lcd_puts_macro
+F12  int2hex_macro
+F13  lcd_puts_macro
+F14  umul3_macro
+F15  int2hex_macro
+F16  lcd_puts_macro
+F17  int2hex_macro
+F18  lcd_puts_macro
+
+
+Symbols:
+test_op2 LAB (0x83d0) REF sec=rom 
+test_op1 LAB (0x83ce) REF sec=rom 
+test_op3 EXPR(544=0x220) EQU 
+test_msg EXPR(512=0x200) EQU 
+ reset loop2_done LAB (0x8310) sec=rom 
+ reset loop2 LAB (0x8305) sec=rom 
+ reset loop1_done LAB (0x8303) sec=rom 
+ reset loop1 LAB (0x82e9) sec=rom 
+reset LAB (0x82df) REF sec=rom 
+ int2hex loop LAB (0x82d2) sec=rom 
+int2hex LAB (0x82c6) REF sec=rom 
+ byte2hex output LAB (0x82c2) sec=rom 
+ byte2hex to_hex LAB (0x82b8) REF sec=rom 
+byte2hex LAB (0x82af) REF sec=rom 
+ umul3 mul_b_lshift_loop LAB (0x82a5) sec=rom 
+ umul3 mul_add_b_loop LAB (0x8297) sec=rom 
+ umul3 mul_no_add LAB (0x82a1) sec=rom 
+ umul3 mul_a_rshift_loop LAB (0x828b) sec=rom 
+ umul3 mul_outer_loop LAB (0x8285) sec=rom 
+ umul3 prep_loop2 LAB (0x827b) sec=rom 
+ umul3 prep_loop1 LAB (0x8266) sec=rom 
+umul3 LAB (0x825d) REF sec=rom 
+scratch_space2 LAB (0x1d) REF sec=zero_page 
+scratch_space1 LAB (0xd) REF sec=zero_page 
+arith_op_c_size LAB (0xc) REF sec=zero_page 
+arith_op_a_size LAB (0xb) REF sec=zero_page 
+arith_op_c_ptr LAB (0x9) REF sec=zero_page 
+arith_op_b_ptr LAB (0x7) REF sec=zero_page 
+arith_op_a_ptr LAB (0x5) REF sec=zero_page 
+_arith_space_s EXPR(1=0x1) UNUSED 
+lcd_4bit_cmd_data LAB (0x8258) REF sec=rom 
+lcd_first_cmd_data LAB (0x8249) REF sec=rom 
+ lcd_puts done LAB (0x8248) sec=rom 
+ lcd_puts loop LAB (0x823e) sec=rom 
+lcd_puts LAB (0x823c) REF sec=rom 
+ lcd_first_cmd delay LAB (0x8238) sec=rom 
+ lcd_first_cmd loop2 LAB (0x822f) sec=rom 
+lcd_first_cmd LAB (0x822c) REF sec=rom 
+ lcd_common loop1 LAB (0x8220) sec=rom 
+lcd_putchar LAB (0x8210) REF sec=rom 
+lcd_common LAB (0x8214) sec=rom 
+lcd_cmd LAB (0x820a) REF sec=rom 
+lcd_hi_bits LAB (0x4) REF sec=zero_page 
+lcd_puts_ptr LAB (0x2) REF sec=zero_page 
+LCD_5x10 EXPR(4=0x4) UNUSED EQU 
+LCD_2LINES EXPR(8=0x8) EQU 
+LCD_8BIT EXPR(16=0x10) EQU 
+LCD_DIR EXPR(4=0x4) UNUSED EQU 
+LCD_SM EXPR(8=0x8) UNUSED EQU 
+LCD_BLINK EXPR(1=0x1) UNUSED EQU 
+LCD_CURSOR EXPR(2=0x2) EQU 
+LCD_DISP EXPR(4=0x4) EQU 
+LCD_SHIFT EXPR(1=0x1) UNUSED EQU 
+LCD_INC EXPR(2=0x2) EQU 
+LCD_CMD_DDRAM EXPR(128=0x80) UNUSED EQU 
+LCD_CMD_CGRAM EXPR(64=0x40) UNUSED EQU 
+LCD_CMD_FNSET EXPR(32=0x20) EQU 
+LCD_CMD_SHIFT EXPR(16=0x10) UNUSED EQU 
+LCD_CMD_DISP EXPR(8=0x8) EQU 
+LCD_CMD_ENTRY EXPR(4=0x4) EQU 
+LCD_CMD_HOME EXPR(2=0x2) UNUSED EQU 
+LCD_CMD_CLEAR EXPR(1=0x1) EQU 
+LCD_RS EXPR(32=0x20) EQU 
+LCD_RW EXPR(64=0x40) UNUSED EQU 
+LCD_E EXPR(128=0x80) EQU 
+ wait2 inner LAB (0x8202) sec=rom 
+wait2 LAB (0x8200) REF sec=rom 
+wait_count LAB (0x0) REF sec=zero_page 
+_util_wait_s EXPR(1=0x1) UNUSED 
+VIA0_RAWA EXPR(32783=0x800f) UNUSED EQU 
+VIA0_IER EXPR(32782=0x800e) UNUSED EQU 
+VIA0_IFR EXPR(32781=0x800d) UNUSED EQU 
+VIA0_PCR EXPR(32780=0x800c) UNUSED EQU 
+VIA0_ACR EXPR(32779=0x800b) UNUSED EQU 
+VIA0_SR EXPR(32778=0x800a) UNUSED EQU 
+VIA0_T2C_H EXPR(32777=0x8009) UNUSED EQU 
+VIA0_T2C_L EXPR(32776=0x8008) UNUSED EQU 
+VIA0_T1L_H EXPR(32775=0x8007) UNUSED EQU 
+VIA0_T1L_L EXPR(32774=0x8006) UNUSED EQU 
+VIA0_T1C_H EXPR(32773=0x8005) UNUSED EQU 
+VIA0_T1C_L EXPR(32772=0x8004) UNUSED EQU 
+VIA0_DDRA EXPR(32771=0x8003) UNUSED EQU 
+VIA0_DDRB EXPR(32770=0x8002) EQU 
+VIA0_PORTA EXPR(32769=0x8001) UNUSED EQU 
+VIA0_PORTB EXPR(32768=0x8000) EQU 
+_65c22_s EXPR(1=0x1) UNUSED 
+VECTOR_TABLE EXPR(65530=0xfffa) EQU 
+ROM_START EXPR(33280=0x8200) EQU 
+IOSPACE_START EXPR(32768=0x8000) EQU 
+RAM_START EXPR(0=0x0) EQU 
+__RPTCNT EXPR(-1=0xffff) INTERNAL 
+__VASM EXPR(0=0x0) INTERNAL 
+
+There have been no errors.

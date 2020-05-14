@@ -11,6 +11,43 @@
   .include          arith-space.s
 
 ;==============================================================================
+; macros
+;
+
+;------------------------------------------------------------------------------
+; add3_macro
+;  store pointers to operands and result, call add3
+;
+; parms
+; op_c - pointer to space to hold result
+; op_a - pointer to left operand
+; op_b - pointer to right operand
+; size - number of bytes in each operand
+;
+; stack usage
+; 2 bytes for add3 call
+;
+
+  .macro          add3_macro,op_c,op_a,op_b,size
+    lda   \4
+    sta   arith_op_a_size               ; store a in operand a size field
+    lda   #<\2                          ; store &op_a in operand a pointer
+    sta   arith_op_a_ptr
+    lda   #>\2
+    sta   arith_op_a_ptr+1
+    lda   #<\3                          ; store &op_b in operand b pointer
+    sta   arith_op_a_ptr
+    lda   #>\3
+    sta   arith_op_a_ptr+1
+    lda   #<\1                          ; store &op_c in operand c pointer
+    sta   arith_op_c_ptr
+    lda   #>\1
+    sta   arith_op_c_ptr+1
+
+    jsr   add3                          ; call add function
+  .endm
+
+;==============================================================================
 ; rom section
 ;
 
