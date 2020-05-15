@@ -79,7 +79,7 @@
 ;
 ; notes:
 ; - n is normally twice as wide as d, q, r. This allows for a full-width
-;   multiply followed by a divide with that full value.
+;   multiply followed by a divide with that full value as n.
 ; - this code assumes n is twice as wide as d, q, r. That may require zero-
 ;   padding prior to use.
 ; - the algorithm wants r and d to be twice as wide as n. So, scratch space
@@ -133,7 +133,10 @@ udiv4:
 
   lda   arith_op_a_size
   asl
-
+  asl
+  asl
+  asl
+;  lda   #17
   ;
   ; start the loop
   ;
@@ -149,7 +152,7 @@ udiv4:
   asl
   asl
   tax
-  dex
+  dex                                   ; x = 4 * op size - 1
 
   ;
   ; push the sign bit
@@ -176,13 +179,12 @@ udiv4:
   ;       half is all zeroes
   ;
 
-  lda   arith_op_a_size
+  lda   arith_op_a_size                 ; y = op size - 1
   tay
   dey
-  asl
+  asl                                   ; x = 2 * op size - 1
   tax
   dex
-  clc
 
   ;
   ; pop the sign bit
@@ -191,36 +193,62 @@ udiv4:
   pla
 
   ;
+  ; if not negative, jump to subtraction
+  ;
+
+  bpl   .udiv4_sub
+
+  ;
   ; if negative, add and go to end of loop
   ;
 
-  bpl   .udiv4_sub_loop
+  clc                                   ; clear carry in preparation for add
 
-.udiv4_add_loop:
+.udiv4_add_loop1:
   lda   scratch_space1,x
   adc   (arith_op_b_ptr),y
-  sta   scratch_space1
+  sta   scratch_space1,x
 
   dex
   dey
 
-  bpl   .udiv4_add_loop
+  bpl   .udiv4_add_loop1
+
+.udiv4_add_loop2:
+  lda   scratch_space1,x                ; propagate carry rest of the way
+  adc   #0
+  sta   scratch_space1,x
+
+  dex
+
+  bpl   .udiv4_add_loop2
 
   bra   .udiv4_outer_loop_end
 
   ;
   ; else, not negative, subtract
   ;
+.udiv4_sub:
+  sec                                   ; set carry in preparation for sub
 
-.udiv4_sub_loop:
+.udiv4_sub_loop1:
   lda   scratch_space1,x
   sbc   (arith_op_b_ptr),y
-  sta   scratch_space1
+  sta   scratch_space1,x
 
   dex
   dey
 
-  bpl   .udiv4_sub_loop
+  bpl   .udiv4_sub_loop1
+
+.udiv4_sub_loop2:
+  lda   scratch_space1,x                ; propagate carry rest of the way
+  sbc   #0
+  sta   scratch_space1,x
+
+  dex
+
+  bpl   .udiv4_sub_loop2
 
   ;
   ; loop back
@@ -231,7 +259,7 @@ udiv4:
   dec
 
   bne   .udiv4_outer_loop
-
+;  rts
   ;
   ; standardize q and copy it to proper location
   ;
@@ -242,7 +270,8 @@ udiv4:
   asl                                   ; x = 4 * op size - 1
   tax
   dex
-  clc
+
+  sec
 
 .udiv4_standardize_loop:
   lda   scratch_space1,x
@@ -269,7 +298,8 @@ udiv4:
   asl                                   ; x = 4 * op size - 1
   tax
   dex
-  sec
+
+  clc
 
 .udiv4_dec_q_loop:                      ; decrement q by setting carry...
   lda   scratch_space1,x                ; ... and subtracting 0 with carry
@@ -299,6 +329,7 @@ udiv4:
   ; copy q and r to proper location
   ;
 
+.udiv4_restore_done:
   lda   arith_op_a_size                 ; y = op size - 1
   tay
   dey

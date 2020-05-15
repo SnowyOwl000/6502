@@ -146,7 +146,7 @@ LCD_5x10          .equ  %00000100       ; font select, 1 = 5x10 font
     lda   #>\1                          ; high byte goes next
     sta   lcd_puts_ptr+1
 
-    jsr   lcd_puts                      ; call the puts function
+    jsr   lcd16_puts                    ; call the puts function
   .endm
 
 ;==============================================================================
