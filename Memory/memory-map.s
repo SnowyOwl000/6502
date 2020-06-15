@@ -3,6 +3,9 @@
 ;
 ; written 12 may 2020 by rwk
 ;
+; modification history
+; 15 june 2020 - modified ROM start to reflect v2 hardware
+;
 
   .ifndef         _memory_map_s
   .defc           _memory_map_s = 1
@@ -15,7 +18,7 @@
 
 RAM_START         .equ  $0000   ; start of the zero page
 IOSPACE_START     .equ  $8000   ; start of I/O space
-ROM_START         .equ  $8200   ; first byte of ROM code after I/O space
+ROM_START         .equ  $8100   ; first byte of ROM code after I/O space
 VECTOR_TABLE      .equ  $fffa   ; CPU vector table
 
 ;------------------------------------------------------------------------------
