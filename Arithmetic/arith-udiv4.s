@@ -3,6 +3,13 @@
 ;
 ; written 13 may 2020 by rwk
 ;
+; modification history
+; - 17 may 2020
+;   split udiv4 into copy in/out and core sections to allow utoa to use the core
+;
+
+  .ifndef         _arith_udiv4_s
+  .defc           _arith_udiv4_s = 1
 
   ;
   ; requires arith-space
@@ -75,7 +82,7 @@
 ; axy
 ;
 ; stack usage
-; 4 bytes - 2 for return address and two scratch bytes
+; 6 bytes - 2 for return address and 4 for udiv4_core
 ;
 ; notes:
 ; - n is normally twice as wide as d, q, r. This allows for a full-width
@@ -128,6 +135,88 @@ udiv4:
   bpl   .udiv4_pad_n_loop
 
   ;
+  ; call the core routine to do the work
+  ;
+
+  jsr   udiv4_core
+
+  ;
+  ; copy q and r to proper location
+  ;
+
+  lda   arith_op_a_size                 ; y = op size - 1
+  tay
+  dey
+  asl                                   ; x = 4 * op size - 1
+  asl
+  tax
+  dex
+
+.udiv4_copy_q_loop:
+  lda   scratch_space1,x
+  sta   (arith_op_c_ptr),y
+
+  dex
+  dey
+
+  bpl   .udiv4_copy_q_loop
+
+  lda   arith_op_a_size                 ; y = op size - 1
+  tay
+  dey
+  asl                                   ; x = 2 * op size - 1
+  tax
+  dex
+
+.udiv4_copy_r_loop:
+  lda   scratch_space1,x
+  sta   (arith_op_d_ptr),y
+
+  dex
+  dey
+
+  bpl   .udiv4_copy_r_loop
+
+  ;
+  ; all done
+  ;
+
+  rts
+
+;-----------------------------------------------------------------------------
+; udiv4_core
+; - core of four-operand unsigned divide: (q,r) = n / d
+;
+; assumes
+; - scratch1:scratch2 holds r=n, zero-padded to 4 * op size bytes
+; - arith_op_b_ptr points to d
+; - arith_op_a_size holds the op size
+;
+; leaves q and r in scratch1:scratch2
+;
+; clobbers
+; axy
+;
+; stack usage
+; 4 bytes - 2 for return address and two scratch bytes
+;
+; notes:
+; - n is normally twice as wide as d, q, r. This allows for a full-width
+;   multiply followed by a divide with that full value as n.
+; - this code assumes n is twice as wide as d, q, r. That may require zero-
+;   padding prior to use.
+; - the algorithm wants r and d to be twice as wide as n. So, scratch space
+;   must be at least 4 times larger. Assuming a max of 64-bit base operands,
+;   this will allow dividing a 128-bit n by 64-bit d.
+; - divide-by-zero is ignored; other functions can check for this if needed
+; - overflow of q is ignored; other functions can check for this if needed
+; - differs from wikipedia article in that I switch the sign on q[i]. That way,
+;   the initial r = 2*r becomes a multi-byte rotate, with the outgoing bit
+;   rotating around to q[i]. the sign switch is fixed in the standardizing step.
+;
+
+udiv4_core:
+  ;
   ; calculate the loop count, 2 * op size
   ;
 
@@ -136,7 +225,7 @@ udiv4:
   asl
   asl
   asl
-;  lda   #17
+
   ;
   ; start the loop
   ;
@@ -259,9 +348,9 @@ udiv4:
   dec
 
   bne   .udiv4_outer_loop
-;  rts
+
   ;
-  ; standardize q and copy it to proper location
+  ; standardize q
   ;
 
   lda   arith_op_a_size                 ; y = 2 * op size
@@ -285,7 +374,7 @@ udiv4:
   bne   .udiv4_standardize_loop
 
   ;
-  ; restoring step in case r < 0; copies r to proper location
+  ; restoring step in case r < 0
   ;
 
   lda   scratch_space1                  ; is r < 0? if not, copy out
@@ -301,7 +390,7 @@ udiv4:
 
   clc
 
-.udiv4_dec_q_loop:                      ; decrement q by setting carry...
+.udiv4_dec_q_loop:                      ; decrement q by clearing carry...
   lda   scratch_space1,x                ; ... and subtracting 0 with carry
   sbc   #0
   sta   scratch_space1,x
@@ -315,7 +404,7 @@ udiv4:
   dey
   clc
 
-.udiv4_add_d_loop
+.udiv4_add_d_loop:
   lda   scratch_space1,x                ; r += d
   adc   (arith_op_b_ptr),y
   sta   scratch_space1,x
@@ -326,45 +415,10 @@ udiv4:
   bpl   .udiv4_add_d_loop
 
   ;
-  ; copy q and r to proper location
+  ; core is done
   ;
 
 .udiv4_restore_done:
-  lda   arith_op_a_size                 ; y = op size - 1
-  tay
-  dey
-  asl                                   ; x = 4 * op size - 1
-  asl
-  tax
-  dex
-
-.udiv4_copy_q_loop:
-  lda   scratch_space1,x
-  sta   (arith_op_c_ptr),y
-
-  dex
-  dey
-
-  bpl   .udiv4_copy_q_loop
-
-  lda   arith_op_a_size                 ; y = op size - 1
-  tay
-  dey
-  asl                                   ; x = 2 * op size - 1
-  tax
-  dex
-
-.udiv4_copy_r_loop:
-  lda   scratch_space1,x
-  sta   (arith_op_d_ptr),y
-
-  dex
-  dey
-
-  bpl   .udiv4_copy_r_loop
-
-  ;
-  ; all done
-  ;
-
   rts
+
+  .endif

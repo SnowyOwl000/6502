@@ -10,6 +10,9 @@
 ; - moved wait2 and its data to util.s
 ;
 
+  .ifndef         _lcd16x2_4_s
+  .defc           _lcd16x2_4_s = 1
+
   ;
   ; requires 65c22.s and util-wait.s
   ;
@@ -122,7 +125,8 @@ LCD_5x10          .equ  %00000100       ; font select, 1 = 5x10 font
 
 .loop2_done:
     ldx   #$ff                          ; note: this can be tweaked probably
-    ldy   #$18
+    ldy   #$c0
+
     jsr   wait2
   .endm
 
@@ -246,6 +250,38 @@ lcd16_common:
   and   #$0f                            ; mask off the high nybble
   ora   lcd_hi_bits                     ; replace with control bits again
 
+;
+; uncomment this block if you want to check the E bit instead of using a
+; timed delay.
+;
+;
+;
+;  sta   VIA0_PORTB                      ; send RS-RW-E config to port B
+;
+;.loop2:
+;  eor   #LCD_E                          ; toggle the E bit
+;  sta   VIA0_PORTB
+;  bmi   .loop2
+;
+;.lcd16_wait:
+;  lda   #%11100000
+;  sta   VIA0_DDRB
+;
+;.lcd16_wait_loop:
+;  lda   #LCD_RW
+;  sta   VIA0_PORTB
+;  eor   #LCD_E
+;  sta   VIA0_PORTB
+;  ldx   VIA0_PORTB
+;  eor   #LCD_E
+;  sta   VIA0_PORTB
+;  txa
+;  and   #%00001000
+;  bne   .lcd16_wait_loop
+;  lda   #%11101111
+;  sta   VIA0_DDRB
+;  rts
+
 ;------------------------------------------------------------------------------
 ; lcd16_first_cmd
 ;  send control command to lcd screen in pseudo 8-bit mode
@@ -279,7 +315,8 @@ lcd16_first_cmd:
   ; delay is 5a-1 = 44us
   ;
 
-  lda #9
+;  lda #9
+  lda #72
 .delay
   dea
   bne   .delay
@@ -327,11 +364,16 @@ lcd16_puts:
 ;
 
 lcd16_first_cmd_data:
-  .byte   24,165,(LCD_CMD_FNSET | LCD_8BIT)/16
-  .byte   30, 65,(LCD_CMD_FNSET | LCD_8BIT)/16
-  .byte    5, 38,(LCD_CMD_FNSET | LCD_8BIT)/16
-  .byte    5, 38,(LCD_CMD_FNSET | LCD_2LINES)/16
-  .byte    5, 38,0
+  .byte   192,165,(LCD_CMD_FNSET | LCD_8BIT)/16
+  .byte   240, 65,(LCD_CMD_FNSET | LCD_8BIT)/16
+  .byte    40, 38,(LCD_CMD_FNSET | LCD_8BIT)/16
+  .byte    40, 38,(LCD_CMD_FNSET | LCD_2LINES)/16
+  .byte    40, 38,0
+;.byte   24,165,(LCD_CMD_FNSET | LCD_8BIT)/16
+;.byte   30, 65,(LCD_CMD_FNSET | LCD_8BIT)/16
+;.byte    5, 38,(LCD_CMD_FNSET | LCD_8BIT)/16
+;.byte    5, 38,(LCD_CMD_FNSET | LCD_2LINES)/16
+;.byte    5, 38,0
 
 ;------------------------------------------------------------------------------
 ; lcd16_4bit_cmd_data
@@ -344,3 +386,5 @@ lcd16_4bit_cmd_data:
   .byte   (LCD_CMD_ENTRY | LCD_INC)
   .byte   LCD_CMD_CLEAR
   .byte   0
+
+  .endif

@@ -4,11 +4,14 @@
 ; written 11 may 2020 by rwk
 ;
 
+  .ifndef         _arith_sub3_s
+  .defc           _arith_subs_s = 1
+
   ;
   ; requires arith-space
   ;
 
-  .include          arith-space.s
+  .include        arith-space.s
 
 ;==============================================================================
 ; macros
@@ -85,3 +88,5 @@ sub3:
   bpl   .loop                           ; if y != 0, loop back
 
   rts                                   ; all done
+
+  .endif

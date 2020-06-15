@@ -3,12 +3,19 @@
 ;
 ; written 12 may 2020 by rwk
 ;
+; modification history
+; - 16 may 2020
+;   changed pointers to util_ pointers instead of arith_ pointers
+;
+
+  .ifndef         _util_tohex_s
+  .defc           _util_tohex_s = 1
 
   ;
-  ; requires arith-space
+  ; requires util-space
   ;
 
-  .include        ../Arithmetic/arith-space.s
+  .include        ../Utilities/util-space.s
 
 ;==============================================================================
 ; macros
@@ -32,15 +39,15 @@
 
   .macro          int2hex_macro,dest,source,size
     lda   \3
-    sta   arith_op_a_size               ; store a in operand a size field
-    lda   #<\2                          ; store &source in operand a pointer
-    sta   arith_op_a_ptr
+    sta   util_src_size                 ; store size in operand size field
+    lda   #<\2                          ; store source operand pointer
+    sta   util_src_ptr
     lda   #>\2
-    sta   arith_op_a_ptr+1
-    lda   #<\1                          ; store &dest in operand c pointer
-    sta   arith_op_c_ptr
+    sta   util_src_ptr+1
+    lda   #<\1                          ; store dest operand pointer
+    sta   util_dest_ptr
     lda   #>\1
-    sta   arith_op_c_ptr+1
+    sta   util_dest_ptr+1
 
     jsr   int2hex                       ; call conversion function
   .endm
@@ -53,13 +60,13 @@
 
 ;------------------------------------------------------------------------------
 ; byte2hex
-; - convert reg a value to hex, store in op_c[y-1] and op_c[y-2]
+; - convert reg a value to hex, store in dest[y-1] and dest[y-2]
 ; - also subtracts 2 from y
 ;
 ; parms
-; a             - value to be converted
-; y             - index in array indicating where to store hex digits
-; operand_c_ptr - pointer to array of char to hold converted hex digits
+; a        - value to be converted
+; y        - index in array indicating where to store hex digits
+; dest_ptr - pointer to array of char to hold converted hex digits
 ;
 ; clobbers
 ; a
@@ -91,7 +98,7 @@ byte2hex:
 
 .output:
   dey                                   ; move back one position
-  sta   (arith_op_c_ptr),y              ; store hex digit
+  sta   (util_dest_ptr),y               ; store hex digit
   rts                                   ; done
 
 ;------------------------------------------------------------------------------
@@ -99,9 +106,9 @@ byte2hex:
 ; - convert unsigned int to hex
 ;
 ; parms
-; arith_op_a_ptr  - pointer to binary value, big-endian
-; arith_op_c_ptr  - pointer to space to hold converted digits
-; arith_op_a_size - number of bytes in binary value
+; util_src_ptr   - pointer to binary value, big-endian
+; util_dest_ptr  - pointer to space to hold converted digits
+; util_src_size  - number of bytes in binary value
 ;
 ; clobbers
 ; axy
@@ -110,27 +117,26 @@ byte2hex:
 ; 7 bytes - 2 for return address, 5 for byte2hex
 ;
 ; Note:
-; - assumes operand c size is > 2 * (operand a size)
+; - assumes dest size is > 2 * (source operand size)
 
 int2hex:
-  clc                                   ; set y = 2 * (operand a size)
-  lda   arith_op_a_size                 ; index of 0 at end of string
+  lda   util_src_size
 
-  tax                                   ; a brief zwischenzug
+  tax                                   ; x = source size - 1
   dex                                   ; x is index of byte to be converted
 
-  adc   arith_op_a_size
-  tay
+  asl                                   ; y = 2 * source size
+  tay                                   ; index of 0 at end of string
 
-  lda   #0                              ; (*operand_c_ptr)[y] = 0
-  sta   (arith_op_c_ptr),y
+  lda   #0                              ; (*dest)[y] = 0
+  sta   (util_dest_ptr),y
 
 .loop:
   phy                                   ; save y
 
   txa                                   ; copy x to y for indirect index load
   tay
-  lda (arith_op_a_ptr),y                ; a = (*operand_a_ptr)[y=x]
+  lda (util_src_ptr),y                  ; a = (*source)[y=x]
 
   ply                                   ; restore y
   dex                                   ; increment x
@@ -147,3 +153,5 @@ int2hex:
   bne .loop                             ; loop back if y != 0
 
   rts
+
+  .endif

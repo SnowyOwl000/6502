@@ -4,6 +4,9 @@
 ; written 12 may 2020 by rwk
 ;
 
+  .ifndef         _arith_umul3_s
+  .defc           _arith_umul3_s = 1
+
   ;
   ; requires arith-space
   ;
@@ -191,3 +194,6 @@ umul3:
   bne   .mul_outer_loop
 
   rts                                   ; all done
+
+  .endif
+  

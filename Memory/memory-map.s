@@ -4,6 +4,9 @@
 ; written 12 may 2020 by rwk
 ;
 
+  .ifndef         _memory_map_s
+  .defc           _memory_map_s = 1
+
 ;==============================================================================
 ; locations of items in rwk design
 ;
@@ -30,3 +33,5 @@ VECTOR_TABLE      .equ  $fffa   ; CPU vector table
 
   .org            VECTOR_TABLE
   .section        vectors,"adr"
+
+  .endif

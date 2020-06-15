@@ -4,6 +4,9 @@
 ; written 11 may 2020 by rwk
 ;
 
+  .ifndef           _arith_add3_s
+  .defc             _arith_add3_s = 1
+
   ;
   ; requires arith-space
   ;
@@ -85,3 +88,6 @@ add3:
   bpl   .loop                           ; if y >= 0, loop back
 
   rts                                   ; all done
+
+  .endif
+  
