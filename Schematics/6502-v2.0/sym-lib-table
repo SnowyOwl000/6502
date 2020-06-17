@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name 65xx)(type Legacy)(uri "/home/bob/Projects/External Repos/6502-kicad-library/65xx.lib")(options "")(descr ""))
+  (lib (name RAM)(type Legacy)(uri "/home/bob/Projects/External Repos/kicad-library/library/memory.lib")(options "")(descr ""))
+)

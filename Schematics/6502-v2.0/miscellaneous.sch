@@ -1,0 +1,336 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr USLetter 11000 8500
+encoding utf-8
+Sheet 8 10
+Title "Miscellaneous Items"
+Date "2020-06-17"
+Rev "1"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 "Power leads and other items needed by KiCAD"
+$EndDescr
+$Comp
+L power:GND #PWR0107
+U 1 1 5F21A548
+P 1100 5300
+F 0 "#PWR0107" H 1100 5050 50  0001 C CNN
+F 1 "GND" H 1105 5127 50  0000 C CNN
+F 2 "" H 1100 5300 50  0001 C CNN
+F 3 "" H 1100 5300 50  0001 C CNN
+	1    1100 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR0108
+U 1 1 5F21A78B
+P 850 5300
+F 0 "#PWR0108" H 850 5150 50  0001 C CNN
+F 1 "+5V" H 865 5473 50  0000 C CNN
+F 2 "" H 850 5300 50  0001 C CNN
+F 3 "" H 850 5300 50  0001 C CNN
+	1    850  5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:PWR_FLAG #FLG0101
+U 1 1 5F21AC30
+P 1100 5300
+F 0 "#FLG0101" H 1100 5375 50  0001 C CNN
+F 1 "PWR_FLAG" H 1100 5473 50  0001 C CNN
+F 2 "" H 1100 5300 50  0001 C CNN
+F 3 "~" H 1100 5300 50  0001 C CNN
+	1    1100 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:PWR_FLAG #FLG0102
+U 1 1 5F21B138
+P 850 5300
+F 0 "#FLG0102" H 850 5375 50  0001 C CNN
+F 1 "PWR_FLAG" H 850 5473 50  0001 C CNN
+F 2 "" H 850 5300 50  0001 C CNN
+F 3 "~" H 850 5300 50  0001 C CNN
+	1    850  5300
+	-1   0    0    1   
+$EndComp
+Wire Notes Line
+	750  5050 750  5550
+Wire Notes Line
+	750  5550 1250 5550
+Wire Notes Line
+	1250 5550 1250 5050
+Wire Notes Line
+	1250 5050 750  5050
+Text Notes 750  5000 0    50   ~ 0
+Power flags for error checker
+$Comp
+L 74xx:74LS74 U1
+U 3 1 5F29C9F6
+P 1050 1700
+F 0 "U1" H 1280 1746 50  0000 L CNN
+F 1 "74LS74" H 1280 1655 50  0000 L CNN
+F 2 "" H 1050 1700 50  0001 C CNN
+F 3 "74xx/74hc_hct74.pdf" H 1050 1700 50  0001 C CNN
+	3    1050 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS74 U2
+U 3 1 5F29D1A9
+P 1850 1700
+F 0 "U2" H 2080 1746 50  0000 L CNN
+F 1 "74LS74" H 2080 1655 50  0000 L CNN
+F 2 "" H 1850 1700 50  0001 C CNN
+F 3 "74xx/74hc_hct74.pdf" H 1850 1700 50  0001 C CNN
+	3    1850 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS08 U3
+U 5 1 5F29D9B2
+P 2650 1700
+F 0 "U3" H 2880 1746 50  0000 L CNN
+F 1 "74LS08" H 2880 1655 50  0000 L CNN
+F 2 "" H 2650 1700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 2650 1700 50  0001 C CNN
+	5    2650 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS08 U4
+U 5 1 5F29E45A
+P 3450 1700
+F 0 "U4" H 3680 1746 50  0000 L CNN
+F 1 "74LS08" H 3680 1655 50  0000 L CNN
+F 2 "" H 3450 1700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3450 1700 50  0001 C CNN
+	5    3450 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U9
+U 5 1 5F29F464
+P 5850 1700
+F 0 "U9" H 6080 1746 50  0000 L CNN
+F 1 "74LS32" H 6080 1655 50  0000 L CNN
+F 2 "" H 5850 1700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5850 1700 50  0001 C CNN
+	5    5850 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U7
+U 5 1 5F2A0523
+P 4250 1700
+F 0 "U7" H 4480 1746 50  0000 L CNN
+F 1 "74LS32" H 4480 1655 50  0000 L CNN
+F 2 "" H 4250 1700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4250 1700 50  0001 C CNN
+	5    4250 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U8
+U 5 1 5F2A1087
+P 5050 1700
+F 0 "U8" H 5280 1746 50  0000 L CNN
+F 1 "74LS32" H 5280 1655 50  0000 L CNN
+F 2 "" H 5050 1700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5050 1700 50  0001 C CNN
+	5    5050 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR0110
+U 1 1 5F3005E1
+P 3450 1100
+F 0 "#PWR0110" H 3450 950 50  0001 C CNN
+F 1 "+5V" H 3465 1273 50  0000 C CNN
+F 2 "" H 3450 1100 50  0001 C CNN
+F 3 "" H 3450 1100 50  0001 C CNN
+	1    3450 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0111
+U 1 1 5F300EDB
+P 3450 2300
+F 0 "#PWR0111" H 3450 2050 50  0001 C CNN
+F 1 "GND" H 3455 2127 50  0000 C CNN
+F 2 "" H 3450 2300 50  0001 C CNN
+F 3 "" H 3450 2300 50  0001 C CNN
+	1    3450 2300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 2200 4250 2250
+Wire Wire Line
+	2650 2250 2650 2200
+Wire Wire Line
+	4250 2250 3450 2250
+Wire Wire Line
+	3450 2300 3450 2250
+Connection ~ 3450 2250
+Wire Wire Line
+	3450 2250 2650 2250
+Wire Wire Line
+	3450 2200 3450 2250
+Wire Wire Line
+	1050 2100 1050 2250
+Wire Wire Line
+	1050 2250 1850 2250
+Connection ~ 2650 2250
+Wire Wire Line
+	1850 2100 1850 2250
+Connection ~ 1850 2250
+Wire Wire Line
+	1850 2250 2650 2250
+Wire Wire Line
+	5850 2200 5850 2250
+Wire Wire Line
+	5850 2250 5050 2250
+Connection ~ 4250 2250
+Wire Wire Line
+	5050 2200 5050 2250
+Connection ~ 5050 2250
+Wire Wire Line
+	5050 2250 4250 2250
+Wire Wire Line
+	2650 1200 2650 1150
+Wire Wire Line
+	2650 1150 3450 1150
+Wire Wire Line
+	4250 1150 4250 1200
+Wire Wire Line
+	1050 1300 1050 1150
+Wire Wire Line
+	1050 1150 1850 1150
+Connection ~ 2650 1150
+Wire Wire Line
+	1850 1300 1850 1150
+Connection ~ 1850 1150
+Wire Wire Line
+	1850 1150 2650 1150
+Wire Wire Line
+	3450 1200 3450 1150
+Connection ~ 3450 1150
+Wire Wire Line
+	3450 1150 4250 1150
+Wire Wire Line
+	3450 1100 3450 1150
+Wire Wire Line
+	5850 1200 5850 1150
+Wire Wire Line
+	5850 1150 5050 1150
+Connection ~ 4250 1150
+Wire Wire Line
+	5050 1200 5050 1150
+Connection ~ 5050 1150
+Wire Wire Line
+	5050 1150 4250 1150
+Wire Notes Line
+	750  850  6450 850 
+Wire Notes Line
+	6450 850  6450 2550
+Wire Notes Line
+	6450 2550 750  2550
+Wire Notes Line
+	750  850  750  2550
+Text Notes 750  800  0    50   ~ 0
+Power leads for clock chips
+$Comp
+L 74xx:74LS32 U11
+U 5 1 5F510367
+P 1050 3800
+F 0 "U11" H 1280 3846 50  0000 L CNN
+F 1 "74LS32" H 1280 3755 50  0000 L CNN
+F 2 "" H 1050 3800 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 1050 3800 50  0001 C CNN
+	5    1050 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U12
+U 5 1 5F51161F
+P 1850 3800
+F 0 "U12" H 2080 3846 50  0000 L CNN
+F 1 "74LS32" H 2080 3755 50  0000 L CNN
+F 2 "" H 1850 3800 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 1850 3800 50  0001 C CNN
+	5    1850 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS00 U15
+U 5 1 5F5132E5
+P 2650 3800
+F 0 "U15" H 2880 3846 50  0000 L CNN
+F 1 "74LS00" H 2880 3755 50  0000 L CNN
+F 2 "" H 2650 3800 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74ls00" H 2650 3800 50  0001 C CNN
+	5    2650 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR0120
+U 1 1 5F5153A9
+P 1850 3200
+F 0 "#PWR0120" H 1850 3050 50  0001 C CNN
+F 1 "+5V" H 1865 3373 50  0000 C CNN
+F 2 "" H 1850 3200 50  0001 C CNN
+F 3 "" H 1850 3200 50  0001 C CNN
+	1    1850 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0121
+U 1 1 5F515D6C
+P 1850 4400
+F 0 "#PWR0121" H 1850 4150 50  0001 C CNN
+F 1 "GND" H 1855 4227 50  0000 C CNN
+F 2 "" H 1850 4400 50  0001 C CNN
+F 3 "" H 1850 4400 50  0001 C CNN
+	1    1850 4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2650 4300 2650 4350
+Wire Wire Line
+	2650 4350 1850 4350
+Wire Wire Line
+	1050 4350 1050 4300
+Wire Wire Line
+	1850 4400 1850 4350
+Connection ~ 1850 4350
+Wire Wire Line
+	1850 4350 1050 4350
+Wire Wire Line
+	1850 4300 1850 4350
+Wire Wire Line
+	2650 3300 2650 3250
+Wire Wire Line
+	2650 3250 1850 3250
+Wire Wire Line
+	1050 3250 1050 3300
+Wire Wire Line
+	1850 3300 1850 3250
+Connection ~ 1850 3250
+Wire Wire Line
+	1850 3250 1050 3250
+Wire Wire Line
+	1850 3200 1850 3250
+Wire Notes Line
+	750  2950 3300 2950
+Wire Notes Line
+	3300 2950 3300 4650
+Wire Notes Line
+	3300 4650 750  4650
+Wire Notes Line
+	750  4650 750  2950
+Text Notes 750  2900 0    50   ~ 0
+Power leads for control bus chips
+$EndSCHEMATC

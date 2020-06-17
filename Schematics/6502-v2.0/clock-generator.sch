@@ -1,0 +1,538 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr USLetter 11000 8500
+encoding utf-8
+Sheet 2 10
+Title "Clock Signal Generator"
+Date "2020-06-17"
+Rev "1"
+Comp ""
+Comment1 ""
+Comment2 "Generates adjustable clock and single pulses via both sides of 556"
+Comment3 "Generates 8 MHz, 4 MHz, 2 MHz, 1 MHz and 500 kHz via D flip-flop cascade"
+Comment4 "Clock signal generator"
+$EndDescr
+$Comp
+L Oscillator:ACO-xxxMHz X1
+U 1 1 5EE955AE
+P 3350 2250
+F 0 "X1" H 3100 2300 50  0000 R CNN
+F 1 "8 MHz" H 3100 2200 50  0000 R CNN
+F 2 "Oscillator:Oscillator_DIP-14" H 3800 1900 50  0001 C CNN
+F 3 "http://www.conwin.com/datasheets/cx/cx030.pdf" H 3250 2250 50  0001 C CNN
+	1    3350 2250
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS74 U1
+U 2 1 5EE95DA8
+P 4150 2250
+F 0 "U1" H 3900 2000 50  0000 C CNN
+F 1 "74LS74" H 3900 1900 50  0000 C CNN
+F 2 "" H 4150 2250 50  0001 C CNN
+F 3 "74xx/74hc_hct74.pdf" H 4150 2250 50  0001 C CNN
+	2    4150 2250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3650 2250 3700 2250
+Wire Wire Line
+	3850 2150 3800 2150
+Wire Wire Line
+	3800 2150 3800 1900
+Wire Wire Line
+	3800 1900 4500 1900
+Wire Wire Line
+	4500 1900 4500 2350
+Wire Wire Line
+	4500 2350 4450 2350
+Wire Wire Line
+	4450 2150 4700 2150
+Wire Wire Line
+	4700 2150 4700 2250
+Text GLabel 4700 2650 3    50   Output ~ 0
+CLK_GEN_4
+Wire Wire Line
+	4150 2550 4150 2600
+Wire Wire Line
+	4150 2600 4600 2600
+Wire Wire Line
+	4600 2600 4600 1800
+Wire Wire Line
+	4600 1800 4150 1800
+Wire Wire Line
+	3350 1800 3350 1950
+Wire Wire Line
+	4150 1950 4150 1800
+Connection ~ 4150 1800
+Wire Wire Line
+	4150 1800 3350 1800
+Text GLabel 3700 2650 3    50   Output ~ 0
+CLK_GEN_8
+Wire Wire Line
+	3700 2650 3700 2250
+Connection ~ 3700 2250
+Wire Wire Line
+	3700 2250 3850 2250
+$Comp
+L 74xx:74LS74 U2
+U 2 1 5EE993B6
+P 5150 2250
+F 0 "U2" H 4900 2000 50  0000 C CNN
+F 1 "74LS74" H 4900 1900 50  0000 C CNN
+F 2 "" H 5150 2250 50  0001 C CNN
+F 3 "74xx/74hc_hct74.pdf" H 5150 2250 50  0001 C CNN
+	2    5150 2250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4850 2250 4700 2250
+Connection ~ 4700 2250
+Wire Wire Line
+	4700 2250 4700 2650
+Wire Wire Line
+	5450 2350 5500 2350
+Wire Wire Line
+	5500 2350 5500 1900
+Wire Wire Line
+	5500 1900 4800 1900
+Wire Wire Line
+	4800 1900 4800 2150
+Wire Wire Line
+	4800 2150 4850 2150
+Wire Wire Line
+	5150 2550 5150 2600
+Wire Wire Line
+	5150 2600 5600 2600
+Wire Wire Line
+	5600 2600 5600 1800
+Wire Wire Line
+	5600 1800 5150 1800
+Connection ~ 4600 1800
+Wire Wire Line
+	5150 1950 5150 1800
+Connection ~ 5150 1800
+Wire Wire Line
+	5150 1800 4600 1800
+$Comp
+L power:+5V #PWR0101
+U 1 1 5EE9BD99
+P 3350 1750
+F 0 "#PWR0101" H 3350 1600 50  0001 C CNN
+F 1 "+5V" H 3365 1923 50  0000 C CNN
+F 2 "" H 3350 1750 50  0001 C CNN
+F 3 "" H 3350 1750 50  0001 C CNN
+	1    3350 1750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 1800 3350 1750
+Connection ~ 3350 1800
+$Comp
+L power:GND #PWR0102
+U 1 1 5EE9CC3C
+P 3350 2600
+F 0 "#PWR0102" H 3350 2350 50  0001 C CNN
+F 1 "GND" H 3355 2427 50  0000 C CNN
+F 2 "" H 3350 2600 50  0001 C CNN
+F 3 "" H 3350 2600 50  0001 C CNN
+	1    3350 2600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 2600 3350 2550
+$Comp
+L 74xx:74LS74 U2
+U 1 1 5EE9D68E
+P 6150 2250
+F 0 "U2" H 5900 2000 50  0000 C CNN
+F 1 "74LS74" H 5900 1900 50  0000 C CNN
+F 2 "" H 6150 2250 50  0001 C CNN
+F 3 "74xx/74hc_hct74.pdf" H 6150 2250 50  0001 C CNN
+	1    6150 2250
+	1    0    0    -1  
+$EndComp
+Text GLabel 5700 2650 3    50   Output ~ 0
+CLK_GEN_2
+Wire Wire Line
+	5450 2150 5700 2150
+Wire Wire Line
+	5700 2150 5700 2250
+Wire Wire Line
+	5850 2250 5700 2250
+Connection ~ 5700 2250
+Wire Wire Line
+	5700 2250 5700 2650
+Wire Wire Line
+	5850 2150 5800 2150
+Wire Wire Line
+	5800 2150 5800 1900
+Wire Wire Line
+	5800 1900 6500 1900
+Wire Wire Line
+	6500 1900 6500 2350
+Wire Wire Line
+	6500 2350 6450 2350
+Wire Wire Line
+	6150 2550 6150 2600
+Wire Wire Line
+	6150 2600 6600 2600
+Wire Wire Line
+	6600 2600 6600 1800
+Wire Wire Line
+	6600 1800 6150 1800
+Connection ~ 5600 1800
+Wire Wire Line
+	6150 1950 6150 1800
+Connection ~ 6150 1800
+Wire Wire Line
+	6150 1800 5600 1800
+Text GLabel 6700 2650 3    50   Output ~ 0
+CLK_GEN_1
+Wire Wire Line
+	6450 2150 6700 2150
+Wire Wire Line
+	6700 2150 6700 2250
+$Comp
+L 74xx:74LS74 U1
+U 1 1 5EEA800F
+P 7150 2250
+F 0 "U1" H 6900 2000 50  0000 C CNN
+F 1 "74LS74" H 6900 1900 50  0000 C CNN
+F 2 "" H 7150 2250 50  0001 C CNN
+F 3 "74xx/74hc_hct74.pdf" H 7150 2250 50  0001 C CNN
+	1    7150 2250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6850 2250 6700 2250
+Connection ~ 6700 2250
+Wire Wire Line
+	6700 2250 6700 2650
+Wire Wire Line
+	6850 2150 6800 2150
+Wire Wire Line
+	6800 2150 6800 1900
+Wire Wire Line
+	6800 1900 7500 1900
+Wire Wire Line
+	7500 1900 7500 2350
+Wire Wire Line
+	7500 2350 7450 2350
+Wire Wire Line
+	7150 2550 7150 2600
+Wire Wire Line
+	7150 2600 7600 2600
+Wire Wire Line
+	7600 2600 7600 1800
+Wire Wire Line
+	7600 1800 7150 1800
+Connection ~ 6600 1800
+Wire Wire Line
+	7150 1950 7150 1800
+Connection ~ 7150 1800
+Wire Wire Line
+	7150 1800 6600 1800
+Text Notes 7250 2850 0    50   ~ 0
+U1A Q output can replace\nCLK_GEN_8 with 500 kHz signal
+$Comp
+L Timer:LM556 U5
+U 2 1 5EEB648A
+P 4250 4850
+F 0 "U5" H 3950 5300 50  0000 C CNN
+F 1 "NE556" H 3950 5200 50  0000 C CNN
+F 2 "" H 4250 4850 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/lm556.pdf" H 4250 4850 50  0001 C CNN
+	2    4250 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4750 4850 4800 4850
+Wire Wire Line
+	4800 4850 4800 4450
+$Comp
+L Device:R R1
+U 1 1 5EEB86A4
+P 4800 4300
+F 0 "R1" V 4900 4250 50  0000 L CNN
+F 1 "1k" V 4800 4250 50  0000 L CNN
+F 2 "" V 4730 4300 50  0001 C CNN
+F 3 "~" H 4800 4300 50  0001 C CNN
+	1    4800 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4800 4150 4800 4100
+Wire Wire Line
+	4800 4100 4250 4100
+Wire Wire Line
+	4250 4100 4250 4450
+Wire Wire Line
+	4750 5050 4800 5050
+Wire Wire Line
+	4800 5050 4800 5300
+Wire Wire Line
+	4800 5300 3650 5300
+Wire Wire Line
+	3650 5300 3650 4650
+Wire Wire Line
+	3650 4650 3750 4650
+Wire Wire Line
+	3750 4850 3550 4850
+Wire Wire Line
+	3550 4850 3550 5350
+Wire Wire Line
+	3750 5050 3450 5050
+Wire Wire Line
+	3450 5050 3450 4100
+Connection ~ 4250 4100
+$Comp
+L power:+5V #PWR0103
+U 1 1 5EEBEF27
+P 4250 4050
+F 0 "#PWR0103" H 4250 3900 50  0001 C CNN
+F 1 "+5V" H 4265 4223 50  0000 C CNN
+F 2 "" H 4250 4050 50  0001 C CNN
+F 3 "" H 4250 4050 50  0001 C CNN
+	1    4250 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 4050 4250 4100
+Wire Wire Line
+	7450 2150 7700 2150
+Wire Wire Line
+	7700 2150 7700 2650
+NoConn ~ 7700 2650
+$Comp
+L Device:C C1
+U 1 1 5EED251D
+P 3550 5500
+F 0 "C1" H 3665 5546 50  0000 L CNN
+F 1 "0.01uF" H 3665 5455 50  0000 L CNN
+F 2 "" H 3588 5350 50  0001 C CNN
+F 3 "~" H 3550 5500 50  0001 C CNN
+	1    3550 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:CP1 C2
+U 1 1 5EED2D3C
+P 4800 5500
+F 0 "C2" H 4915 5546 50  0000 L CNN
+F 1 "1uF" H 4915 5455 50  0000 L CNN
+F 2 "" H 4800 5500 50  0001 C CNN
+F 3 "~" H 4800 5500 50  0001 C CNN
+	1    4800 5500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4800 5350 4800 5300
+Connection ~ 4800 5300
+Wire Wire Line
+	4800 5650 4800 5700
+Wire Wire Line
+	4800 5700 4250 5700
+Wire Wire Line
+	3550 5700 3550 5650
+Wire Wire Line
+	4250 5250 4250 5700
+Connection ~ 4250 5700
+$Comp
+L power:GND #PWR0104
+U 1 1 5EED7C24
+P 4250 5750
+F 0 "#PWR0104" H 4250 5500 50  0001 C CNN
+F 1 "GND" H 4255 5577 50  0000 C CNN
+F 2 "" H 4250 5750 50  0001 C CNN
+F 3 "" H 4250 5750 50  0001 C CNN
+	1    4250 5750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 5700 4250 5750
+$Comp
+L Device:R R2
+U 1 1 5EED99B0
+P 5000 4850
+F 0 "R2" V 4900 4850 50  0000 C CNN
+F 1 "1k" V 5000 4850 50  0000 C CNN
+F 2 "" V 4930 4850 50  0001 C CNN
+F 3 "~" H 5000 4850 50  0001 C CNN
+	1    5000 4850
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_POT RV1
+U 1 1 5EEDAA6F
+P 5200 5050
+F 0 "RV1" V 5100 5100 50  0000 R CNN
+F 1 "1M" V 5200 5100 50  0000 R CNN
+F 2 "" H 5200 5050 50  0001 C CNN
+F 3 "~" H 5200 5050 50  0001 C CNN
+	1    5200 5050
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	4850 4850 4800 4850
+Connection ~ 4800 4850
+Wire Wire Line
+	5150 4850 5200 4850
+Wire Wire Line
+	5200 4850 5200 4900
+Wire Wire Line
+	5050 5050 4800 5050
+Connection ~ 4800 5050
+Wire Wire Line
+	5200 5200 5200 5350
+NoConn ~ 5200 5350
+Text GLabel 5200 4650 2    50   Output ~ 0
+CLK_GEN_VAR
+Wire Wire Line
+	4750 4650 5200 4650
+$Comp
+L Timer:LM556 U5
+U 1 1 5EEF2568
+P 7200 4850
+F 0 "U5" H 6900 5300 50  0000 C CNN
+F 1 "NE556" H 6900 5200 50  0000 C CNN
+F 2 "" H 7200 4850 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/lm556.pdf" H 7200 4850 50  0001 C CNN
+	1    7200 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6700 5050 6650 5050
+Wire Wire Line
+	6650 5050 6650 4100
+Connection ~ 6650 4100
+Wire Wire Line
+	6650 4100 7200 4100
+Wire Wire Line
+	6700 4650 6500 4650
+$Comp
+L Device:R R3
+U 1 1 5EEFCE6B
+P 6500 4300
+F 0 "R3" V 6600 4250 50  0000 L CNN
+F 1 "1k" V 6500 4250 50  0000 L CNN
+F 2 "" V 6430 4300 50  0001 C CNN
+F 3 "~" H 6500 4300 50  0001 C CNN
+	1    6500 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6500 4150 6500 4100
+Connection ~ 6500 4100
+Wire Wire Line
+	6500 4100 6650 4100
+Wire Wire Line
+	6500 4450 6500 4650
+Connection ~ 6500 4650
+Wire Wire Line
+	6500 4650 6450 4650
+$Comp
+L Switch:SW_Push SW7
+U 1 1 5EF0D1E6
+P 6250 4650
+F 0 "SW7" H 6250 4850 50  0000 C CNN
+F 1 "Pulse" H 6250 4550 50  0000 C CNN
+F 2 "" H 6250 4850 50  0001 C CNN
+F 3 "~" H 6250 4850 50  0001 C CNN
+	1    6250 4650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C3
+U 1 1 5EF0E34D
+P 6500 5350
+F 0 "C3" H 6615 5396 50  0000 L CNN
+F 1 "0.01uF" H 6615 5305 50  0000 L CNN
+F 2 "" H 6538 5200 50  0001 C CNN
+F 3 "~" H 6500 5350 50  0001 C CNN
+	1    6500 5350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C4
+U 1 1 5EF0F224
+P 7750 5350
+F 0 "C4" H 7865 5396 50  0000 L CNN
+F 1 "0.1uF" H 7865 5305 50  0000 L CNN
+F 2 "" H 7788 5200 50  0001 C CNN
+F 3 "~" H 7750 5350 50  0001 C CNN
+	1    7750 5350
+	1    0    0    -1  
+$EndComp
+Connection ~ 4800 4100
+$Comp
+L Device:R R4
+U 1 1 5EF151A5
+P 7750 4300
+F 0 "R4" V 7850 4250 50  0000 L CNN
+F 1 "1M" V 7750 4250 50  0000 L CNN
+F 2 "" V 7680 4300 50  0001 C CNN
+F 3 "~" H 7750 4300 50  0001 C CNN
+	1    7750 4300
+	1    0    0    -1  
+$EndComp
+Text GLabel 7950 4650 2    50   Output ~ 0
+CLK_GEN_ONE
+Wire Wire Line
+	7700 4650 7950 4650
+Wire Wire Line
+	7750 4450 7750 4850
+Wire Wire Line
+	7700 5050 7750 5050
+Connection ~ 7750 5050
+Wire Wire Line
+	7750 5050 7750 5200
+Wire Wire Line
+	7700 4850 7750 4850
+Connection ~ 7750 4850
+Wire Wire Line
+	7750 4850 7750 5050
+Wire Wire Line
+	7750 4150 7750 4100
+Wire Wire Line
+	6700 4850 6500 4850
+Wire Wire Line
+	6500 4850 6500 5200
+Wire Wire Line
+	7750 5700 7750 5500
+Connection ~ 4800 5700
+Wire Wire Line
+	7200 5250 7200 5700
+Connection ~ 7200 5700
+Wire Wire Line
+	7200 5700 7750 5700
+Wire Wire Line
+	6500 5500 6500 5700
+Connection ~ 6500 5700
+Wire Wire Line
+	6500 5700 7200 5700
+Wire Wire Line
+	6050 4650 6000 4650
+Wire Wire Line
+	6000 4650 6000 5700
+Connection ~ 6000 5700
+Wire Wire Line
+	6000 5700 6500 5700
+Wire Wire Line
+	4800 4100 6500 4100
+Wire Wire Line
+	4800 5700 6000 5700
+Wire Wire Line
+	3550 5700 4250 5700
+Wire Wire Line
+	3450 4100 4250 4100
+Text Notes 4650 5900 0    50   ~ 0
+C2 can be replaced with 0.1uF\nto increase frequency
+Wire Wire Line
+	7200 4450 7200 4100
+Connection ~ 7200 4100
+Wire Wire Line
+	7200 4100 7750 4100
+NoConn ~ 8550 3600
+$EndSCHEMATC

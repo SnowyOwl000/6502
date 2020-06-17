@@ -1,0 +1,396 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr USLetter 11000 8500
+encoding utf-8
+Sheet 11 10
+Title "Control Bus Logic"
+Date "2020-06-17"
+Rev "1"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 "Note: Clock is also part of the control bus"
+Comment4 "Logic and other components to establish signals on the control bus"
+$EndDescr
+$Comp
+L 74xx:74LS32 U11
+U 3 1 5F37D464
+P 3000 2200
+F 0 "U11" H 3000 2525 50  0000 C CNN
+F 1 "74LS32" H 3000 2434 50  0000 C CNN
+F 2 "" H 3000 2200 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 3000 2200 50  0001 C CNN
+	3    3000 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U11
+U 4 1 5F37E1F5
+P 3000 2800
+F 0 "U11" H 3000 3125 50  0000 C CNN
+F 1 "74LS32" H 3000 3034 50  0000 C CNN
+F 2 "" H 3000 2800 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 3000 2800 50  0001 C CNN
+	4    3000 2800
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U11
+U 1 1 5F37EA08
+P 3000 3400
+F 0 "U11" H 3000 3725 50  0000 C CNN
+F 1 "74LS32" H 3000 3634 50  0000 C CNN
+F 2 "" H 3000 3400 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 3000 3400 50  0001 C CNN
+	1    3000 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U11
+U 2 1 5F37F87E
+P 3700 4000
+F 0 "U11" H 3700 4325 50  0000 C CNN
+F 1 "74LS32" H 3700 4234 50  0000 C CNN
+F 2 "" H 3700 4000 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 3700 4000 50  0001 C CNN
+	2    3700 4000
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U12
+U 4 1 5F381ABD
+P 4400 2500
+F 0 "U12" H 4400 2183 50  0000 C CNN
+F 1 "74LS32" H 4400 2274 50  0000 C CNN
+F 2 "" H 4400 2500 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4400 2500 50  0001 C CNN
+	4    4400 2500
+	1    0    0    1   
+$EndComp
+$Comp
+L 74xx:74LS32 U12
+U 1 1 5F38288E
+P 4400 3700
+F 0 "U12" H 4400 3383 50  0000 C CNN
+F 1 "74LS32" H 4400 3474 50  0000 C CNN
+F 2 "" H 4400 3700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4400 3700 50  0001 C CNN
+	1    4400 3700
+	1    0    0    1   
+$EndComp
+$Comp
+L 74xx:74LS32 U12
+U 2 1 5F383996
+P 5100 3100
+F 0 "U12" H 5100 2783 50  0000 C CNN
+F 1 "74LS32" H 5100 2874 50  0000 C CNN
+F 2 "" H 5100 3100 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5100 3100 50  0001 C CNN
+	2    5100 3100
+	1    0    0    1   
+$EndComp
+$Comp
+L 74xx:74LS00 U15
+U 4 1 5F384DD0
+P 3000 4600
+F 0 "U15" H 3000 4925 50  0000 C CNN
+F 1 "74LS00" H 3000 4834 50  0000 C CNN
+F 2 "" H 3000 4600 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74ls00" H 3000 4600 50  0001 C CNN
+	4    3000 4600
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS00 U15
+U 3 1 5F385D85
+P 3700 4700
+F 0 "U15" H 3700 5025 50  0000 C CNN
+F 1 "74LS00" H 3700 4934 50  0000 C CNN
+F 2 "" H 3700 4700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74ls00" H 3700 4700 50  0001 C CNN
+	3    3700 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS00 U15
+U 2 1 5F386E49
+P 5800 3100
+F 0 "U15" H 5800 3425 50  0000 C CNN
+F 1 "74LS00" H 5800 3334 50  0000 C CNN
+F 2 "" H 5800 3100 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74ls00" H 5800 3100 50  0001 C CNN
+	2    5800 3100
+	1    0    0    -1  
+$EndComp
+Text GLabel 2500 4600 0    50   Input ~ 0
+ADDR_A15
+Wire Wire Line
+	2700 4700 2600 4700
+Wire Wire Line
+	2600 4700 2600 4600
+Wire Wire Line
+	2600 4600 2500 4600
+Wire Wire Line
+	2700 4500 2600 4500
+Wire Wire Line
+	2600 4500 2600 4600
+Connection ~ 2600 4600
+Text GLabel 2500 4850 0    50   Input ~ 0
+CTRL_CLK
+Wire Wire Line
+	3400 4800 3250 4800
+Wire Wire Line
+	3250 4800 3250 4850
+Wire Wire Line
+	3250 4850 2500 4850
+Wire Wire Line
+	3400 4100 3350 4100
+Wire Wire Line
+	3350 4100 3350 4250
+Wire Wire Line
+	3350 4600 3300 4600
+Wire Wire Line
+	3400 4600 3350 4600
+Connection ~ 3350 4600
+Text GLabel 2500 3900 0    50   Input ~ 0
+ADDR_A8
+Wire Wire Line
+	2500 3900 3400 3900
+Text GLabel 4150 4700 2    50   Output ~ 0
+CTRL_RAM
+Wire Wire Line
+	4000 4700 4150 4700
+Text GLabel 2500 3500 0    50   Input ~ 0
+ADDR_A9
+Text GLabel 2500 3300 0    50   Input ~ 0
+ADDR_A10
+Wire Wire Line
+	2500 3500 2700 3500
+Wire Wire Line
+	2500 3300 2700 3300
+Wire Wire Line
+	4000 4000 4050 4000
+Wire Wire Line
+	4050 4000 4050 3800
+Wire Wire Line
+	4050 3800 4100 3800
+Wire Wire Line
+	3300 3400 4050 3400
+Wire Wire Line
+	4050 3400 4050 3600
+Wire Wire Line
+	4050 3600 4100 3600
+Text GLabel 2500 2900 0    50   Input ~ 0
+ADDR_A11
+Text GLabel 2500 2700 0    50   Input ~ 0
+ADDR_A12
+Text GLabel 2500 2300 0    50   Input ~ 0
+ADDR_A13
+Text GLabel 2500 2100 0    50   Input ~ 0
+ADDR_A14
+Wire Wire Line
+	2500 2100 2700 2100
+Wire Wire Line
+	2500 2300 2700 2300
+Wire Wire Line
+	2500 2700 2700 2700
+Wire Wire Line
+	2500 2900 2700 2900
+Wire Wire Line
+	4100 2600 4050 2600
+Wire Wire Line
+	4050 2600 4050 2800
+Wire Wire Line
+	4050 2800 3300 2800
+Wire Wire Line
+	4100 2400 4050 2400
+Wire Wire Line
+	4050 2400 4050 2200
+Wire Wire Line
+	4050 2200 3300 2200
+Wire Wire Line
+	4700 3700 4750 3700
+Wire Wire Line
+	4750 3700 4750 3200
+Wire Wire Line
+	4750 3200 4800 3200
+Wire Wire Line
+	4700 2500 4750 2500
+Wire Wire Line
+	4750 2500 4750 3000
+Wire Wire Line
+	4750 3000 4800 3000
+Wire Wire Line
+	5400 3100 5450 3100
+Wire Wire Line
+	5450 3100 5450 3200
+Wire Wire Line
+	5450 3200 5500 3200
+Wire Wire Line
+	5500 3000 5450 3000
+Wire Wire Line
+	5450 3000 5450 3100
+Connection ~ 5450 3100
+Text GLabel 6300 3100 2    50   Output ~ 0
+CTRL_NOR
+Text GLabel 6300 3350 2    50   Output ~ 0
+CTRL_OR
+Wire Wire Line
+	6100 3100 6300 3100
+Wire Wire Line
+	6300 3350 5450 3350
+Wire Wire Line
+	5450 3350 5450 3200
+Connection ~ 5450 3200
+$Comp
+L power:+5V #PWR0118
+U 1 1 5F4BDB5A
+P 8000 2100
+F 0 "#PWR0118" H 8000 1950 50  0001 C CNN
+F 1 "+5V" H 8015 2273 50  0000 C CNN
+F 2 "" H 8000 2100 50  0001 C CNN
+F 3 "" H 8000 2100 50  0001 C CNN
+	1    8000 2100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R18
+U 1 1 5F4BF18E
+P 8250 2300
+F 0 "R18" V 8150 2300 50  0000 C CNN
+F 1 "1k" V 8250 2300 50  0000 C CNN
+F 2 "" V 8180 2300 50  0001 C CNN
+F 3 "~" H 8250 2300 50  0001 C CNN
+	1    8250 2300
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R19
+U 1 1 5F4BF814
+P 8250 2550
+F 0 "R19" V 8150 2550 50  0000 C CNN
+F 1 "1k" V 8250 2550 50  0000 C CNN
+F 2 "" V 8180 2550 50  0001 C CNN
+F 3 "~" H 8250 2550 50  0001 C CNN
+	1    8250 2550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R20
+U 1 1 5F4BFD79
+P 8250 2800
+F 0 "R20" V 8150 2800 50  0000 C CNN
+F 1 "1k" V 8250 2800 50  0000 C CNN
+F 2 "" V 8180 2800 50  0001 C CNN
+F 3 "~" H 8250 2800 50  0001 C CNN
+	1    8250 2800
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R21
+U 1 1 5F4C01C0
+P 8250 3050
+F 0 "R21" V 8150 3050 50  0000 C CNN
+F 1 "1k" V 8250 3050 50  0000 C CNN
+F 2 "" V 8180 3050 50  0001 C CNN
+F 3 "~" H 8250 3050 50  0001 C CNN
+	1    8250 3050
+	0    1    1    0   
+$EndComp
+Text GLabel 8600 2300 2    50   Output ~ 0
+CTRL_RDY
+Text GLabel 8600 2550 2    50   Output ~ 0
+CTRL_BE
+Text GLabel 8600 2800 2    50   Output ~ 0
+CTRL_IRQB
+Text GLabel 8600 3050 2    50   Output ~ 0
+CTRL_NMIB
+$Comp
+L Device:R R22
+U 1 1 5F4C6556
+P 8250 3300
+F 0 "R22" V 8150 3300 50  0000 C CNN
+F 1 "1k" V 8250 3300 50  0000 C CNN
+F 2 "" V 8180 3300 50  0001 C CNN
+F 3 "~" H 8250 3300 50  0001 C CNN
+	1    8250 3300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8400 2300 8600 2300
+Wire Wire Line
+	8400 2550 8600 2550
+Wire Wire Line
+	8400 2800 8600 2800
+Wire Wire Line
+	8400 3050 8600 3050
+Wire Wire Line
+	8100 3300 8000 3300
+Wire Wire Line
+	8000 3300 8000 3050
+Wire Wire Line
+	8100 2300 8000 2300
+Connection ~ 8000 2300
+Wire Wire Line
+	8000 2300 8000 2100
+Wire Wire Line
+	8100 2550 8000 2550
+Connection ~ 8000 2550
+Wire Wire Line
+	8000 2550 8000 2300
+Wire Wire Line
+	8100 2800 8000 2800
+Connection ~ 8000 2800
+Wire Wire Line
+	8000 2800 8000 2550
+Wire Wire Line
+	8100 3050 8000 3050
+Connection ~ 8000 3050
+Wire Wire Line
+	8000 3050 8000 2800
+Text GLabel 8600 3300 2    50   Output ~ 0
+CTRL_RESB
+Wire Wire Line
+	8600 3300 8500 3300
+$Comp
+L Switch:SW_Push SW8
+U 1 1 5F4D275B
+P 8250 3650
+F 0 "SW8" H 8250 3850 50  0000 C CNN
+F 1 "Reset" H 8250 3550 50  0000 C CNN
+F 2 "" H 8250 3850 50  0001 C CNN
+F 3 "~" H 8250 3850 50  0001 C CNN
+	1    8250 3650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0119
+U 1 1 5F4D665B
+P 8000 3800
+F 0 "#PWR0119" H 8000 3550 50  0001 C CNN
+F 1 "GND" H 8005 3627 50  0000 C CNN
+F 2 "" H 8000 3800 50  0001 C CNN
+F 3 "" H 8000 3800 50  0001 C CNN
+	1    8000 3800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8000 3800 8000 3650
+Wire Wire Line
+	8000 3650 8050 3650
+Wire Wire Line
+	8450 3650 8500 3650
+Wire Wire Line
+	8500 3650 8500 3300
+Connection ~ 8500 3300
+Wire Wire Line
+	8500 3300 8400 3300
+Text GLabel 4150 4250 2    50   Output ~ 0
+CTRL_A15B
+Wire Wire Line
+	4150 4250 3350 4250
+Connection ~ 3350 4250
+Wire Wire Line
+	3350 4250 3350 4600
+$EndSCHEMATC

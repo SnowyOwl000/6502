@@ -1,0 +1,299 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr USLetter 11000 8500
+encoding utf-8
+Sheet 4 10
+Title "Clock Signal / Selection Combination Logic"
+Date "2020-06-17"
+Rev "1"
+Comp ""
+Comment1 "Optional LED to show 556 clock rate"
+Comment2 "Combines results via OR gates"
+Comment3 "Masks off unselected clock signals via AND gates"
+Comment4 "Signal / selection combination logic"
+$EndDescr
+$Comp
+L 74xx:74LS08 U3
+U 1 1 5F121CBE
+P 4450 1700
+F 0 "U3" H 4450 2025 50  0000 C CNN
+F 1 "74LS08" H 4450 1934 50  0000 C CNN
+F 2 "" H 4450 1700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 4450 1700 50  0001 C CNN
+	1    4450 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS08 U3
+U 2 1 5F122D6E
+P 4450 2400
+F 0 "U3" H 4450 2725 50  0000 C CNN
+F 1 "74LS08" H 4450 2634 50  0000 C CNN
+F 2 "" H 4450 2400 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 4450 2400 50  0001 C CNN
+	2    4450 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS08 U3
+U 3 1 5F1245FD
+P 4450 3100
+F 0 "U3" H 4450 3425 50  0000 C CNN
+F 1 "74LS08" H 4450 3334 50  0000 C CNN
+F 2 "" H 4450 3100 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 4450 3100 50  0001 C CNN
+	3    4450 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS08 U3
+U 4 1 5F128B2A
+P 4450 3800
+F 0 "U3" H 4450 4125 50  0000 C CNN
+F 1 "74LS08" H 4450 4034 50  0000 C CNN
+F 2 "" H 4450 3800 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 4450 3800 50  0001 C CNN
+	4    4450 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS08 U4
+U 1 1 5F13346A
+P 4450 4500
+F 0 "U4" H 4450 4825 50  0000 C CNN
+F 1 "74LS08" H 4450 4734 50  0000 C CNN
+F 2 "" H 4450 4500 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 4450 4500 50  0001 C CNN
+	1    4450 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS08 U4
+U 2 1 5F135123
+P 4450 5200
+F 0 "U4" H 4450 5525 50  0000 C CNN
+F 1 "74LS08" H 4450 5434 50  0000 C CNN
+F 2 "" H 4450 5200 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 4450 5200 50  0001 C CNN
+	2    4450 5200
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U8
+U 3 1 5F16B3BF
+P 5150 2000
+F 0 "U8" H 5150 2325 50  0000 C CNN
+F 1 "74LS32" H 5150 2234 50  0000 C CNN
+F 2 "" H 5150 2000 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5150 2000 50  0001 C CNN
+	3    5150 2000
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U9
+U 4 1 5F16CE5B
+P 5150 3450
+F 0 "U9" H 5150 3775 50  0000 C CNN
+F 1 "74LS32" H 5150 3684 50  0000 C CNN
+F 2 "" H 5150 3450 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5150 3450 50  0001 C CNN
+	4    5150 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U9
+U 3 1 5F16DEC6
+P 5150 4850
+F 0 "U9" H 5150 5175 50  0000 C CNN
+F 1 "74LS32" H 5150 5084 50  0000 C CNN
+F 2 "" H 5150 4850 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5150 4850 50  0001 C CNN
+	3    5150 4850
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U9
+U 1 1 5F18BA77
+P 5850 2700
+F 0 "U9" H 5850 3025 50  0000 C CNN
+F 1 "74LS32" H 5850 2934 50  0000 C CNN
+F 2 "" H 5850 2700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5850 2700 50  0001 C CNN
+	1    5850 2700
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS32 U9
+U 2 1 5F18E33A
+P 6550 3750
+F 0 "U9" H 6550 4075 50  0000 C CNN
+F 1 "74LS32" H 6550 3984 50  0000 C CNN
+F 2 "" H 6550 3750 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 6550 3750 50  0001 C CNN
+	2    6550 3750
+	1    0    0    -1  
+$EndComp
+Text GLabel 4000 1600 0    50   Input ~ 0
+CLK_SEL_1
+Text GLabel 4000 1800 0    50   Input ~ 0
+CLK_GEN_1
+Text GLabel 4000 2300 0    50   Input ~ 0
+CLK_SEL_2
+Text GLabel 4000 2500 0    50   Input ~ 0
+CLK_GEN_2
+Text GLabel 4000 3000 0    50   Input ~ 0
+CLK_SEL_8
+Text GLabel 4000 3200 0    50   Input ~ 0
+CLK_GEN_8
+Text GLabel 4000 3700 0    50   Input ~ 0
+CLK_SEL_4
+Text GLabel 4000 3900 0    50   Input ~ 0
+CLK_GEN_4
+Text GLabel 4000 4400 0    50   Input ~ 0
+CLK_SEL_VAR
+Text GLabel 4000 4600 0    50   Input ~ 0
+CLK_GEN_VAR
+Text GLabel 4000 5100 0    50   Input ~ 0
+CLK_SEL_ONE
+Text GLabel 4000 5300 0    50   Input ~ 0
+CLK_GEN_ONE
+Wire Wire Line
+	4000 5300 4150 5300
+Wire Wire Line
+	4000 5100 4150 5100
+Wire Wire Line
+	4000 4600 4150 4600
+Wire Wire Line
+	4000 4400 4150 4400
+Wire Wire Line
+	4000 3900 4150 3900
+Wire Wire Line
+	4000 3700 4150 3700
+Wire Wire Line
+	4000 3200 4150 3200
+Wire Wire Line
+	4000 3000 4150 3000
+Wire Wire Line
+	4000 2500 4150 2500
+Wire Wire Line
+	4000 2300 4150 2300
+Wire Wire Line
+	4000 1800 4150 1800
+Wire Wire Line
+	4000 1600 4150 1600
+Wire Wire Line
+	4750 5200 4800 5200
+Wire Wire Line
+	4800 5200 4800 4950
+Wire Wire Line
+	4800 4950 4850 4950
+Wire Wire Line
+	4750 4500 4800 4500
+Wire Wire Line
+	4800 4500 4800 4750
+Wire Wire Line
+	4800 4750 4850 4750
+Wire Wire Line
+	5450 4850 6200 4850
+Wire Wire Line
+	6200 4850 6200 3850
+Wire Wire Line
+	6200 3850 6250 3850
+Wire Wire Line
+	4750 3800 4800 3800
+Wire Wire Line
+	4800 3800 4800 3550
+Wire Wire Line
+	4800 3550 4850 3550
+Wire Wire Line
+	4750 3100 4800 3100
+Wire Wire Line
+	4800 3100 4800 3350
+Wire Wire Line
+	4800 3350 4850 3350
+Wire Wire Line
+	4750 2400 4800 2400
+Wire Wire Line
+	4800 2400 4800 2100
+Wire Wire Line
+	4800 2100 4850 2100
+Wire Wire Line
+	4750 1700 4800 1700
+Wire Wire Line
+	4800 1700 4800 1900
+Wire Wire Line
+	4800 1900 4850 1900
+Wire Wire Line
+	5450 2000 5500 2000
+Wire Wire Line
+	5500 2000 5500 2600
+Wire Wire Line
+	5500 2600 5550 2600
+Wire Wire Line
+	5450 3450 5500 3450
+Wire Wire Line
+	5500 3450 5500 2800
+Wire Wire Line
+	5500 2800 5550 2800
+Wire Wire Line
+	6150 2700 6200 2700
+Wire Wire Line
+	6200 2700 6200 3650
+Wire Wire Line
+	6200 3650 6250 3650
+Text GLabel 7000 3750 2    50   Output ~ 0
+CTRL_CLK
+Wire Wire Line
+	6850 3750 7000 3750
+$Comp
+L Device:LED_ALT D7
+U 1 1 5F24239F
+P 6200 5200
+F 0 "D7" H 6200 5100 50  0000 C CNN
+F 1 "Blue" H 6200 5300 50  0000 C CNN
+F 2 "" H 6200 5200 50  0001 C CNN
+F 3 "~" H 6200 5200 50  0001 C CNN
+	1    6200 5200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R17
+U 1 1 5F246104
+P 6200 5650
+F 0 "R17" V 6300 5650 50  0000 C CNN
+F 1 "220" V 6200 5650 50  0000 C CNN
+F 2 "" V 6130 5650 50  0001 C CNN
+F 3 "~" H 6200 5650 50  0001 C CNN
+	1    6200 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0109
+U 1 1 5F248B4F
+P 6200 5850
+F 0 "#PWR0109" H 6200 5600 50  0001 C CNN
+F 1 "GND" H 6205 5677 50  0000 C CNN
+F 2 "" H 6200 5850 50  0001 C CNN
+F 3 "" H 6200 5850 50  0001 C CNN
+	1    6200 5850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6200 5850 6200 5800
+Wire Wire Line
+	6200 5500 6200 5350
+Wire Wire Line
+	6200 5050 6200 4850
+Connection ~ 6200 4850
+Wire Notes Line
+	6000 5000 6400 5000
+Wire Notes Line
+	6400 5000 6400 6150
+Wire Notes Line
+	6400 6150 6000 6150
+Wire Notes Line
+	6000 6150 6000 5000
+Text Notes 6450 5250 0    50   ~ 0
+Optional\n\nFlashes to indicate clock speed from 556 outputs
+$EndSCHEMATC
